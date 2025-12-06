@@ -214,3 +214,8 @@ __marimo__/
 
 # thoughts documents
 *thoughts/
+
+# Node.js
+node_modules/
+out/
+*.vsix
