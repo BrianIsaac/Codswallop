@@ -355,6 +355,34 @@ export class ConvexClient implements vscode.Disposable {
   }
 
   /**
+   * Joins a classroom by join code.
+   *
+   * Args:
+   *     joinCode: The 6-character classroom join code.
+   *
+   * Returns:
+   *     Object with success status and message.
+   */
+  async joinClassroom(joinCode: string): Promise<{ success: boolean; message: string }> {
+    if (!this.client) {
+      throw new Error('Convex client not initialised');
+    }
+
+    const token = await this.ensureAuthenticated();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+
+    // Set the auth token on the Convex client before making the request
+    this.client.setAuth(token);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return await (this.client as any).mutation('classrooms:joinByCode', {
+      joinCode,
+    });
+  }
+
+  /**
    * Gets recent vibechecks for the dashboard.
    *
    * Args:

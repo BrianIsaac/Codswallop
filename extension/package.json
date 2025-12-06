@@ -60,6 +60,10 @@
       {
         "command": "codswallop.showAuthStatus",
         "title": "Codswallop: Show Auth Status"
+      },
+      {
+        "command": "codswallop.joinClassroom",
+        "title": "Codswallop: Join Classroom"
       }
     ],
     "configuration": {
@@ -96,8 +100,8 @@
         },
         "codswallop.convexUrl": {
           "type": "string",
-          "default": "",
-          "description": "Convex deployment URL for syncing data"
+          "default": "https://shocking-peacock-740.convex.cloud",
+          "description": "Convex deployment URL for syncing data (override for development only)"
         },
         "codswallop.dashboardUrl": {
           "type": "string",

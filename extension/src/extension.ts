@@ -283,6 +283,82 @@ function registerCommands(context: vscode.ExtensionContext): void {
     }
   );
 
+  const joinClassroomCommand = vscode.commands.registerCommand(
+    'codswallop.joinClassroom',
+    async () => {
+      const session = await getSession();
+      if (!session) {
+        const choice = await vscode.window.showWarningMessage(
+          'Please login first to join a classroom',
+          'Login'
+        );
+        if (choice === 'Login') {
+          await vscode.commands.executeCommand('codswallop.login');
+        }
+        return;
+      }
+
+      const joinCode = await vscode.window.showInputBox({
+        prompt: 'Enter the 6-character classroom join code',
+        placeHolder: 'ABC123',
+        validateInput: (value) => {
+          if (value.length !== 6) {
+            return 'Join code must be 6 characters';
+          }
+          if (!/^[A-Za-z0-9]+$/.test(value)) {
+            return 'Join code must be alphanumeric';
+          }
+          return null;
+        },
+      });
+
+      if (!joinCode) {
+        return;
+      }
+
+      try {
+        const convexClient = getConvexClient();
+        if (!convexClient) {
+          vscode.window.showErrorMessage(
+            'Codswallop: Convex client not initialised. Please configure convexUrl in settings.'
+          );
+          return;
+        }
+
+        const result = await convexClient.joinClassroom(joinCode.toUpperCase());
+
+        if (result.success) {
+          if (result.message === 'Already in classroom') {
+            vscode.window.showInformationMessage(
+              'You are already a member of this classroom'
+            );
+          } else {
+            vscode.window.showInformationMessage(
+              'Successfully joined classroom!'
+            );
+          }
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+        // Handle specific error cases with user-friendly messages
+        if (errorMessage.includes('Classroom not found')) {
+          vscode.window.showWarningMessage(
+            'Invalid classroom code. Please check the code and try again.'
+          );
+        } else if (errorMessage.includes('Not authenticated')) {
+          vscode.window.showWarningMessage(
+            'Please login first to join a classroom.'
+          );
+        } else {
+          vscode.window.showErrorMessage(
+            `Failed to join classroom: ${errorMessage}`
+          );
+        }
+      }
+    }
+  );
+
   context.subscriptions.push(
     startVibecheck,
     showDetections,
@@ -291,7 +367,8 @@ function registerCommands(context: vscode.ExtensionContext): void {
     clearApiKey,
     loginCommand,
     logoutCommand,
-    showAuthStatusCommand
+    showAuthStatusCommand,
+    joinClassroomCommand
   );
 }
 

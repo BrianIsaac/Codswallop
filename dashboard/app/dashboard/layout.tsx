@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { useConvexAuth } from 'convex/react';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, SignOutButton } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { Sidebar } from '@/components/sidebar';
 import { useSyncUser } from '@/hooks/use-sync-user';
@@ -45,8 +45,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           This dashboard is for teachers only. Would you like to register as a teacher?
         </p>
         <TeacherRegistration />
-        <div className="mt-4">
-          <UserButton afterSignOutUrl="/" />
+        <div className="mt-6 flex flex-col items-center gap-3">
+          <p className="text-sm text-gray-500">
+            Logged in as {user?.email}
+          </p>
+          <SignOutButton>
+            <button className="px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 hover:border-gray-400 rounded-lg transition-colors">
+              Sign out to switch accounts
+            </button>
+          </SignOutButton>
         </div>
       </div>
     );
