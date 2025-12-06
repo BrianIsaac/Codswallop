@@ -189,16 +189,16 @@ function registerCommands(context: vscode.ExtensionContext): void {
     'codswallop.openDashboard',
     async () => {
       const config = vscode.workspace.getConfiguration('codswallop');
-      const convexUrl = config.get<string>('convexUrl');
+      const dashboardUrl = config.get<string>('dashboardUrl');
 
-      if (!convexUrl) {
+      if (!dashboardUrl) {
         vscode.window.showWarningMessage(
-          'Codswallop: Configure convexUrl in settings to open dashboard'
+          'Codswallop: Configure dashboardUrl in settings to open dashboard'
         );
         return;
       }
 
-      vscode.env.openExternal(vscode.Uri.parse(convexUrl.replace('.convex.cloud', '.convex.site')));
+      vscode.env.openExternal(vscode.Uri.parse(dashboardUrl));
     }
   );
 

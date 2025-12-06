@@ -2,7 +2,7 @@
   "name": "codswallop",
   "displayName": "Codswallop",
   "description": "Vibecode checker for educational coding - detects when students blindly accept AI-generated code",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "publisher": "codswallop",
   "license": "SEE LICENSE IN LICENCE",
   "repository": {
@@ -140,11 +140,11 @@
     "@typescript-eslint/parser": "^7.0.0",
     "@vscode/test-electron": "^2.3.0",
     "@vscode/vsce": "^2.22.0",
-    "eslint": "^8.56.0",
-    "typescript": "^5.3.0"
+    "eslint": "^8.56.0"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
-    "convex": "^1.10.0"
+    "convex": "^1.10.0",
+    "typescript": "^5.3.0"
   }
 }
