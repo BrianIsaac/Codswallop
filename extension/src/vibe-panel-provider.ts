@@ -540,6 +540,7 @@ export function initVibePanel(context: vscode.ExtensionContext): VibePanelProvid
   });
 
   const stateChangeDisposable = stateMachine.onStateChange((newState, prevState, event, ctx) => {
+    console.log(`[VibePanelProvider] State change: ${prevState} -> ${newState} (${event.type})`);
     if (newState === 'pointing' && ctx.pointingDirection) {
       provider.setState(newState, ctx.pointingDirection);
     } else {
@@ -548,6 +549,7 @@ export function initVibePanel(context: vscode.ExtensionContext): VibePanelProvid
   });
 
   const vibeDetectedHandler = eventBus.on('vibe:detected', (data) => {
+    console.log(`[VibePanelProvider] vibe:detected event received, current state: ${stateMachine.state}`);
     stateMachine.send({
       type: 'VIBE_DETECTED',
       triggeredBy: data.triggeredBy,
@@ -558,6 +560,7 @@ export function initVibePanel(context: vscode.ExtensionContext): VibePanelProvid
   });
 
   const vibecheckStartedHandler = eventBus.on('vibecheck:started', (data) => {
+    console.log(`[VibePanelProvider] vibecheck:started event received, current state: ${stateMachine.state}`);
     stateMachine.send({
       type: 'START_VIBECHECK',
       vibecheckId: data.id,
@@ -567,6 +570,7 @@ export function initVibePanel(context: vscode.ExtensionContext): VibePanelProvid
   });
 
   const vibecheckCompletedHandler = eventBus.on('vibecheck:completed', (data) => {
+    console.log(`[VibePanelProvider] vibecheck:completed event received, passed: ${data.passed}, score: ${data.score}, current state: ${stateMachine.state}`);
     if (data.passed) {
       stateMachine.send({ type: 'VIBECHECK_PASSED' });
     } else {
@@ -576,6 +580,7 @@ export function initVibePanel(context: vscode.ExtensionContext): VibePanelProvid
   });
 
   const vibecheckSkippedHandler = eventBus.on('vibecheck:skipped', () => {
+    console.log(`[VibePanelProvider] vibecheck:skipped event received, current state: ${stateMachine.state}`);
     stateMachine.send({ type: 'VIBECHECK_SKIPPED' });
     activityTracker.recordActivity();
   });

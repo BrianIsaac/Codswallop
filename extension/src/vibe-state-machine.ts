@@ -75,6 +75,16 @@ const stateConfig: Record<VibeState, StateDefinition> = {
     on: {
       CODE_CHANGED: { target: 'watching' },
       VIBE_DETECTED: { target: 'detecting' },
+      START_VIBECHECK: {
+        target: 'questioning',
+        actions: [
+          (ctx, event) => {
+            if (event.type === 'START_VIBECHECK') {
+              ctx.currentVibecheckId = event.vibecheckId;
+            }
+          },
+        ],
+      },
       POINT_AT: {
         target: 'pointing',
         actions: [
@@ -96,6 +106,16 @@ const stateConfig: Record<VibeState, StateDefinition> = {
     },
     on: {
       VIBE_DETECTED: { target: 'detecting' },
+      START_VIBECHECK: {
+        target: 'questioning',
+        actions: [
+          (ctx, event) => {
+            if (event.type === 'START_VIBECHECK') {
+              ctx.currentVibecheckId = event.vibecheckId;
+            }
+          },
+        ],
+      },
       TIMEOUT: { target: 'idle' },
       RESET: { target: 'idle' },
     },
@@ -170,6 +190,16 @@ const stateConfig: Record<VibeState, StateDefinition> = {
       WAKE: { target: 'idle' },
       VIBE_DETECTED: { target: 'detecting' },
       CODE_CHANGED: { target: 'idle' },
+      START_VIBECHECK: {
+        target: 'questioning',
+        actions: [
+          (ctx, event) => {
+            if (event.type === 'START_VIBECHECK') {
+              ctx.currentVibecheckId = event.vibecheckId;
+            }
+          },
+        ],
+      },
     },
   },
 

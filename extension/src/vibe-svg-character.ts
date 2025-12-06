@@ -27,7 +27,7 @@ export const vibeColours: VibeColours = {
   secondary: '#8B5CF6',
   tertiary: '#C7D2FE',
   glow: '#A78BFA',
-  dark: '#312E81',
+  dark: '#1a1744',
   accent: '#10B981',
   sparkle: '#F59E0B',
   danger: '#EF4444',
@@ -74,9 +74,9 @@ export function generateIdleVibe(colours: VibeColours = vibeColours): string {
         <!-- Brim -->
         <ellipse cx="75" cy="32" rx="30" ry="6" fill="${colours.dark}"/>
         <!-- Crown -->
-        <rect x="58" y="8" width="34" height="24" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
+        <rect x="58" y="-2" width="34" height="34" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
         <!-- Flat top -->
-        <rect x="58" y="6" width="34" height="4" rx="2" fill="${colours.dark}"/>
+        <rect x="58" y="-4" width="34" height="4" rx="2" fill="${colours.dark}"/>
         <!-- Hat band -->
         <rect x="58" y="26" width="34" height="4" fill="${colours.accent}" opacity="0.8"/>
       </g>
@@ -146,9 +146,9 @@ export function generateWatchingVibe(colours: VibeColours = vibeColours): string
         <!-- Brim -->
         <ellipse cx="75" cy="32" rx="30" ry="6" fill="${colours.dark}"/>
         <!-- Crown -->
-        <rect x="58" y="8" width="34" height="24" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
+        <rect x="58" y="-2" width="34" height="34" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
         <!-- Flat top -->
-        <rect x="58" y="6" width="34" height="4" rx="2" fill="${colours.dark}"/>
+        <rect x="58" y="-4" width="34" height="4" rx="2" fill="${colours.dark}"/>
         <!-- Hat band -->
         <rect x="58" y="26" width="34" height="4" fill="${colours.accent}" opacity="0.8"/>
       </g>
@@ -220,9 +220,9 @@ export function generateDetectingVibe(colours: VibeColours = vibeColours): strin
         <!-- Brim -->
         <ellipse cx="75" cy="32" rx="30" ry="6" fill="${colours.dark}"/>
         <!-- Crown -->
-        <rect x="58" y="8" width="34" height="24" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
+        <rect x="58" y="-2" width="34" height="34" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
         <!-- Flat top -->
-        <rect x="58" y="6" width="34" height="4" rx="2" fill="${colours.dark}"/>
+        <rect x="58" y="-4" width="34" height="4" rx="2" fill="${colours.dark}"/>
         <!-- Hat band (alert colour) -->
         <rect x="58" y="26" width="34" height="4" fill="${colours.sparkle}" opacity="0.8"/>
       </g>
@@ -313,9 +313,9 @@ export function generateQuestioningVibe(colours: VibeColours = vibeColours): str
         <!-- Brim -->
         <ellipse cx="75" cy="32" rx="30" ry="6" fill="${colours.dark}"/>
         <!-- Crown -->
-        <rect x="58" y="8" width="34" height="24" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
+        <rect x="58" y="-2" width="34" height="34" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
         <!-- Flat top -->
-        <rect x="58" y="6" width="34" height="4" rx="2" fill="${colours.dark}"/>
+        <rect x="58" y="-4" width="34" height="4" rx="2" fill="${colours.dark}"/>
         <!-- Hat band -->
         <rect x="58" y="26" width="34" height="4" fill="${colours.accent}" opacity="0.8"/>
       </g>
@@ -427,9 +427,9 @@ export function generateCelebratingVibe(colours: VibeColours = vibeColours): str
         <!-- Brim -->
         <ellipse cx="75" cy="32" rx="30" ry="6" fill="${colours.dark}"/>
         <!-- Crown -->
-        <rect x="58" y="8" width="34" height="24" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
+        <rect x="58" y="-2" width="34" height="34" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
         <!-- Flat top -->
-        <rect x="58" y="6" width="34" height="4" rx="2" fill="${colours.dark}"/>
+        <rect x="58" y="-4" width="34" height="4" rx="2" fill="${colours.dark}"/>
         <!-- Hat band (celebration colour) -->
         <rect x="58" y="26" width="34" height="4" fill="${colours.accent}"/>
       </g>
@@ -513,9 +513,9 @@ export function generateConcernedVibe(colours: VibeColours = vibeColours): strin
         <!-- Brim -->
         <ellipse cx="75" cy="32" rx="30" ry="6" fill="${colours.dark}" opacity="0.8"/>
         <!-- Crown -->
-        <rect x="58" y="8" width="34" height="24" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1" opacity="0.8"/>
+        <rect x="58" y="-2" width="34" height="34" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1" opacity="0.8"/>
         <!-- Flat top -->
-        <rect x="58" y="6" width="34" height="4" rx="2" fill="${colours.dark}" opacity="0.8"/>
+        <rect x="58" y="-4" width="34" height="4" rx="2" fill="${colours.dark}" opacity="0.8"/>
         <!-- Hat band (subdued) -->
         <rect x="58" y="26" width="34" height="4" fill="${colours.secondary}" opacity="0.5"/>
       </g>
@@ -591,9 +591,9 @@ export function generateSleepingVibe(colours: VibeColours = vibeColours): string
         <!-- Brim -->
         <ellipse cx="75" cy="32" rx="30" ry="6" fill="${colours.dark}" opacity="0.6"/>
         <!-- Crown -->
-        <rect x="58" y="8" width="34" height="24" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1" opacity="0.6"/>
+        <rect x="58" y="-2" width="34" height="34" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1" opacity="0.6"/>
         <!-- Flat top -->
-        <rect x="58" y="6" width="34" height="4" rx="2" fill="${colours.dark}" opacity="0.6"/>
+        <rect x="58" y="-4" width="34" height="4" rx="2" fill="${colours.dark}" opacity="0.6"/>
         <!-- Hat band (dimmed) -->
         <rect x="58" y="26" width="34" height="4" fill="${colours.secondary}" opacity="0.4"/>
       </g>
@@ -702,9 +702,9 @@ function generatePointingRightVibe(colours: VibeColours): string {
         <!-- Brim -->
         <ellipse cx="75" cy="32" rx="30" ry="6" fill="${colours.dark}"/>
         <!-- Crown -->
-        <rect x="58" y="8" width="34" height="24" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
+        <rect x="58" y="-2" width="34" height="34" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
         <!-- Flat top -->
-        <rect x="58" y="6" width="34" height="4" rx="2" fill="${colours.dark}"/>
+        <rect x="58" y="-4" width="34" height="4" rx="2" fill="${colours.dark}"/>
         <!-- Hat band -->
         <rect x="58" y="26" width="34" height="4" fill="${colours.accent}" opacity="0.8"/>
       </g>
@@ -772,9 +772,9 @@ function generatePointingLeftVibe(colours: VibeColours): string {
         <!-- Brim -->
         <ellipse cx="75" cy="32" rx="30" ry="6" fill="${colours.dark}"/>
         <!-- Crown -->
-        <rect x="58" y="8" width="34" height="24" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
+        <rect x="58" y="-2" width="34" height="34" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
         <!-- Flat top -->
-        <rect x="58" y="6" width="34" height="4" rx="2" fill="${colours.dark}"/>
+        <rect x="58" y="-4" width="34" height="4" rx="2" fill="${colours.dark}"/>
         <!-- Hat band -->
         <rect x="58" y="26" width="34" height="4" fill="${colours.accent}" opacity="0.8"/>
       </g>
@@ -824,9 +824,9 @@ function generatePointingDownVibe(colours: VibeColours): string {
         <!-- Brim -->
         <ellipse cx="75" cy="22" rx="30" ry="6" fill="${colours.dark}"/>
         <!-- Crown -->
-        <rect x="58" y="-2" width="34" height="24" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
+        <rect x="58" y="-12" width="34" height="34" rx="2" fill="${colours.dark}" stroke="${colours.primary}" stroke-width="1"/>
         <!-- Flat top -->
-        <rect x="58" y="-4" width="34" height="4" rx="2" fill="${colours.dark}"/>
+        <rect x="58" y="-14" width="34" height="4" rx="2" fill="${colours.dark}"/>
         <!-- Hat band -->
         <rect x="58" y="16" width="34" height="4" fill="${colours.accent}" opacity="0.8"/>
       </g>

@@ -69,7 +69,10 @@ export class DocumentTracker implements vscode.Disposable {
     let insertedContent = '';
 
     for (const change of event.contentChanges) {
-      const linesAdded = change.text.split('\n').length - 1;
+      // Split text into lines and count only non-empty lines (with actual content)
+      const allLines = change.text.split('\n');
+      const contentLines = allLines.filter((line) => line.trim().length > 0);
+      const linesAdded = contentLines.length;
       const linesRemoved = change.range.end.line - change.range.start.line;
       const netLines = linesAdded - linesRemoved;
 
@@ -85,6 +88,7 @@ export class DocumentTracker implements vscode.Disposable {
     }
 
     if (totalLinesAdded > 0) {
+      console.log(`[DocumentTracker] Recording ${totalLinesAdded} content lines added to ${uri.split('/').pop()}`);
       this.recordLineChange(uri, totalLinesAdded, now);
       getEventBus().fire('document:changed', {
         uri,
@@ -170,8 +174,14 @@ export class DocumentTracker implements vscode.Disposable {
     const lineSpikeThreshold = threshold ?? config.get<number>('thresholds.lineSpike', 50);
 
     const rate = this.getLinesPerMinute(uri);
+    const detected = rate > lineSpikeThreshold;
+
+    if (detected) {
+      console.log(`[DocumentTracker] Line spike detected: ${rate} lines/min > ${lineSpikeThreshold} threshold`);
+    }
+
     return {
-      detected: rate > lineSpikeThreshold,
+      detected,
       rate,
     };
   }
