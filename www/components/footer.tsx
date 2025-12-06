@@ -19,6 +19,12 @@ export function Footer() {
 
             <div className="flex items-center gap-6">
               <Link
+                href="/guide"
+                className="text-gray-600 hover:text-vibe-600 dark:text-gray-400 dark:hover:text-vibe-400 text-sm transition-colors"
+              >
+                User Guide
+              </Link>
+              <Link
                 href="https://marketplace.visualstudio.com/items?itemName=codswallop.codswallop"
                 className="text-gray-600 hover:text-vibe-600 dark:text-gray-400 dark:hover:text-vibe-400 text-sm transition-colors"
               >

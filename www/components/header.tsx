@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Github } from 'lucide-react';
+import { Github, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function Header() {
@@ -18,6 +18,13 @@ export function Header() {
             Codswallop
           </Link>
           <div className="flex items-center gap-4">
+            <Link
+              href="/guide"
+              className="flex items-center gap-1.5 text-gray-600 hover:text-vibe-600 dark:text-gray-400 dark:hover:text-vibe-400 transition-colors font-medium"
+            >
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">Guide</span>
+            </Link>
             <Link
               href="https://github.com/BrianIsaac/Codswallop"
               target="_blank"
