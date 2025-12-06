@@ -2,7 +2,7 @@
   "name": "codswallop",
   "displayName": "Codswallop",
   "description": "Vibecode checker for educational coding - detects when students blindly accept AI-generated code",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "publisher": "codswallop",
   "license": "SEE LICENSE IN LICENCE",
   "repository": {
