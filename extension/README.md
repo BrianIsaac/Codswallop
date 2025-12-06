@@ -110,4 +110,4 @@ Report issues or request features at [GitHub Issues](https://github.com/BrianIsa
 
 ## Licence
 
-Copyright (c) 2025 Brian Isaac. All Rights Reserved. See [LICENCE](LICENCE) for details.
+Copyright (c) 2025. All Rights Reserved. See [LICENCE](LICENCE) for details.

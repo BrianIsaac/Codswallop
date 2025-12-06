@@ -48,7 +48,7 @@ export function Footer() {
           </div>
 
           <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-600 dark:text-gray-400">
-            <p>Copyright 2025 Brian Isaac. All Rights Reserved.</p>
+            <p>Copyright 2025. All Rights Reserved.</p>
           </div>
         </FadeIn>
       </div>

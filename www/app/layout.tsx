@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: 'Codswallop - Stop Vibe Coding, Start Understanding',
   description: 'Help students, interns, and apprentices build genuine programming skills. Codswallop detects over-reliance on AI-generated code and reinforces understanding through targeted comprehension quizzes.',
   keywords: ['vibe coding', 'education', 'AI detection', 'comprehension', 'VS Code extension', 'programming skills', 'learn to code', 'software engineering', 'intern', 'apprentice'],
-  authors: [{ name: 'Brian Isaac' }],
+  authors: [{ name: 'Codswallop' }],
   openGraph: {
     title: 'Codswallop - Stop Vibe Coding, Start Understanding',
     description: 'Build genuine programming skills. Detect AI over-reliance and reinforce comprehension through targeted quizzes.',
