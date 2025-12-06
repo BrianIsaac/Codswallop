@@ -59,6 +59,7 @@ export interface EventMap {
     passed: boolean;
     score: number;
     answers: Array<{ questionId: string; correct: boolean }>;
+    complexity?: number;
   };
 
   'vibecheck:skipped': {

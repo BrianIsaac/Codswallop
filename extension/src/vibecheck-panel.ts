@@ -43,6 +43,7 @@ export class VibecheckPanel implements vscode.Disposable {
   private questions: VibecheckQuestion[];
   private codeSnippet: string;
   private triggeredBy: IndicatorType;
+  private complexity?: number;
   private answers: QuestionAnswer[] = [];
   private currentQuestionIndex = 0;
 
@@ -52,7 +53,8 @@ export class VibecheckPanel implements vscode.Disposable {
     vibecheckId: string,
     output: VibecheckOutput,
     codeSnippet: string,
-    triggeredBy: IndicatorType
+    triggeredBy: IndicatorType,
+    complexity?: number
   ) {
     this.panel = panel;
     this.extensionUri = extensionUri;
@@ -60,6 +62,7 @@ export class VibecheckPanel implements vscode.Disposable {
     this.questions = output.questions;
     this.codeSnippet = codeSnippet;
     this.triggeredBy = triggeredBy;
+    this.complexity = complexity;
 
     this.startVibecheckInDb();
 
@@ -99,7 +102,8 @@ export class VibecheckPanel implements vscode.Disposable {
     vibecheckId: string,
     output: VibecheckOutput,
     codeSnippet: string,
-    triggeredBy: IndicatorType
+    triggeredBy: IndicatorType,
+    complexity?: number
   ): VibecheckPanel {
     const column = vscode.ViewColumn.Beside;
 
@@ -124,7 +128,8 @@ export class VibecheckPanel implements vscode.Disposable {
       vibecheckId,
       output,
       codeSnippet,
-      triggeredBy
+      triggeredBy,
+      complexity
     );
 
     return VibecheckPanel.currentPanel;
@@ -292,6 +297,7 @@ export class VibecheckPanel implements vscode.Disposable {
         questionId: a.questionId,
         correct: a.correct,
       })),
+      complexity: this.complexity,
     });
   }
 
@@ -921,6 +927,7 @@ let panelInstance: VibecheckPanel | null = null;
  *     output: The generated vibecheck output.
  *     codeSnippet: The code being tested.
  *     triggeredBy: The indicator that triggered the vibecheck.
+ *     complexity: Optional complexity score for metrics.
  *
  * Returns:
  *     The created vibecheck panel.
@@ -930,14 +937,16 @@ export function showVibecheckPanel(
   vibecheckId: string,
   output: VibecheckOutput,
   codeSnippet: string,
-  triggeredBy: IndicatorType
+  triggeredBy: IndicatorType,
+  complexity?: number
 ): VibecheckPanel {
   panelInstance = VibecheckPanel.createOrShow(
     extensionUri,
     vibecheckId,
     output,
     codeSnippet,
-    triggeredBy
+    triggeredBy,
+    complexity
   );
   return panelInstance;
 }

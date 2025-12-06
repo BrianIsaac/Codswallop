@@ -429,6 +429,7 @@ export class ConvexClient implements vscode.Disposable {
     passed: boolean;
     score: number;
     answers: Array<{ questionId: string; correct: boolean }>;
+    complexity?: number;
   }): Promise<void> {
     if (!this.client || !this.userId) {
       return;
@@ -441,7 +442,7 @@ export class ConvexClient implements vscode.Disposable {
         score: data.score,
       });
 
-      await this.updateDailyMetrics(data.passed, data.score);
+      await this.updateDailyMetrics(data.passed, data.score, data.complexity);
 
       getEventBus().fire('convex:synced', { table: 'activityLog', count: 1 });
     } catch (error) {
@@ -551,10 +552,16 @@ export class ConvexClient implements vscode.Disposable {
 
   /**
    * Updates daily metrics after a vibecheck.
+   *
+   * Args:
+   *     passed: Whether the vibecheck was passed.
+   *     score: The vibecheck score.
+   *     complexity: Optional complexity score.
    */
   private async updateDailyMetrics(
     passed: boolean,
-    score: number
+    score: number,
+    complexity?: number
   ): Promise<void> {
     if (!this.client || !this.userId) {
       return;
@@ -563,15 +570,21 @@ export class ConvexClient implements vscode.Disposable {
     const date = new Date().toISOString().split('T')[0];
 
     try {
+      const updates: Record<string, number> = {
+        vibechecksCompleted: 1,
+        vibechecksPassed: passed ? 1 : 0,
+        averageVibeScore: score,
+      };
+
+      if (complexity !== undefined) {
+        updates.averageComplexity = complexity;
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (this.client as any).mutation('metrics:updateDaily', {
         userId: this.userId,
         date,
-        updates: {
-          vibechecksCompleted: 1,
-          vibechecksPassed: passed ? 1 : 0,
-          averageVibeScore: score,
-        },
+        updates,
       });
     } catch (error) {
       console.error('Codswallop: Failed to update metrics:', error);

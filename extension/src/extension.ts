@@ -187,12 +187,19 @@ function registerCommands(context: vscode.ExtensionContext): void {
 
             const finalVibecheckId = dbVibecheckId || vibecheckId;
 
+            // Get complexity if available from the detection
+            const complexity = detection.indicatorValue !== undefined &&
+                               detection.triggeredBy === 'high_complexity'
+                               ? detection.indicatorValue
+                               : undefined;
+
             showVibecheckPanel(
               context.extensionUri,
               finalVibecheckId,
               output,
               detection.codeSnippet,
-              detection.triggeredBy
+              detection.triggeredBy,
+              complexity
             );
 
             getVibeDetector().clearDetection(detection.uri, detection.line);
