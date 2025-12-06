@@ -2,7 +2,7 @@
   "name": "codswallop",
   "displayName": "Codswallop",
   "description": "Vibecode checker for educational coding - detects when students blindly accept AI-generated code",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "publisher": "codswallop",
   "license": "SEE LICENSE IN LICENCE",
   "repository": {
@@ -119,7 +119,7 @@
         },
         "codswallop.mcpServerUrl": {
           "type": "string",
-          "default": "https://codswallop-m6n9.vercel.app/api/mcp",
+          "default": "https://codswallop-m6n9.vercel.app/api/mcp/sse",
           "description": "URL of the hosted MCP server for quiz generation"
         }
       }

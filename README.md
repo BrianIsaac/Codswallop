@@ -78,7 +78,7 @@ npm install
 npm run package
 ```
 
-This creates `codswallop-0.1.7.vsix` which can be installed via:
+This creates `codswallop-0.1.8.vsix` which can be installed via:
 - Command Palette: `Extensions: Install from VSIX...`
 
 ### Development Mode
@@ -219,6 +219,14 @@ codswallop/
 - Node.js 18 or later (for development)
 - Anthropic API key (optional - hosted service available)
 - Convex account (optional - for self-hosted dashboard)
+
+## Common Errors
+
+### MCP Connection Error
+
+If you encounter an MCP error when attempting to generate quizzes, this typically indicates the hosted MCP server is temporarily unavailable.
+
+**Solution:** Use the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and run `Codswallop: Set Anthropic API Key` to configure your personal API key. This allows the extension to generate quizzes directly using your own Anthropic account, bypassing the hosted service.
 
 ## Development
 
