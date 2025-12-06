@@ -219,3 +219,11 @@ __marimo__/
 node_modules/
 out/
 *.vsix
+
+# Next.js
+.next/
+*.tsbuildinfo
+
+# Convex
+_generated/
+.env.local
