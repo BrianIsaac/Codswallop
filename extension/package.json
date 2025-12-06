@@ -110,8 +110,8 @@
         },
         "codswallop.mcpServerUrl": {
           "type": "string",
-          "default": "https://codswallop-mcp.leanmcp.com",
-          "description": "URL of the hosted MCP server for quiz generation (LeanMCP)"
+          "default": "https://codswallop.vercel.app/api/mcp",
+          "description": "URL of the hosted MCP server for quiz generation"
         }
       }
     }

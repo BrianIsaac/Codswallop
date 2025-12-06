@@ -95,7 +95,7 @@ export class MCPClient implements vscode.Disposable {
    */
   private getMcpServerUrl(): string {
     const config = vscode.workspace.getConfiguration('codswallop');
-    return config.get<string>('mcpServerUrl') || 'https://codswallop-mcp.leanmcp.com';
+    return config.get<string>('mcpServerUrl') || 'https://codswallop.vercel.app/api/mcp';
   }
 
   /**
@@ -213,6 +213,7 @@ export class MCPClient implements vscode.Disposable {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Accept: 'application/json, text/event-stream',
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
@@ -240,7 +241,13 @@ export class MCPClient implements vscode.Disposable {
       throw new Error(`MCP server error: ${response.status} ${response.statusText}`);
     }
 
-    const data = (await response.json()) as MCPResponse;
+    // MCP handler returns SSE-formatted response, parse the data line
+    const text = await response.text();
+    const dataMatch = text.match(/^data: (.+)$/m);
+    if (!dataMatch) {
+      throw new Error('Invalid MCP response format');
+    }
+    const data = JSON.parse(dataMatch[1]) as MCPResponse;
 
     if (data.error) {
       throw new Error(data.error.message);
