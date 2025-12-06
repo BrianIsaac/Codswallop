@@ -71,10 +71,13 @@ export interface EventMap {
     functions: FunctionComplexity[];
   };
 
+  'convex:connected': {
+    userId: string;
+  };
+
   'convex:synced': {
-    operation: 'create' | 'update' | 'delete';
     table: string;
-    id: string;
+    count: number;
   };
 }
 

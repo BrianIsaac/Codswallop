@@ -5,6 +5,9 @@ import { getDocumentTracker } from './document-tracker';
 import { getVibeDetector, VibeDetection } from './vibe-detector';
 import { registerCodeLensProvider, getCodeLensProvider } from './codelens-provider';
 import { initDecorationManager, getDecorationManager } from './decoration-manager';
+import { initMCPClient, getMCPClient } from './mcp-client';
+import { initConvexClient, getConvexClient } from './convex-client';
+import { showVibecheckPanel } from './vibecheck-panel';
 
 let statusBarItem: vscode.StatusBarItem;
 const disposables: vscode.Disposable[] = [];
@@ -12,7 +15,7 @@ const disposables: vscode.Disposable[] = [];
 /**
  * Activates the Codswallop extension.
  */
-export function activate(context: vscode.ExtensionContext): void {
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
   console.log('Codswallop extension is activating...');
 
   const config = vscode.workspace.getConfiguration('codswallop');
@@ -25,8 +28,28 @@ export function activate(context: vscode.ExtensionContext): void {
   createStatusBar(context);
   setupEventListeners(context);
   initVibeDetection(context);
+  await initPhase3Components(context);
 
   console.log('Codswallop extension activated successfully');
+}
+
+/**
+ * Initialises Phase 3 components (MCP client, Convex client).
+ */
+async function initPhase3Components(
+  context: vscode.ExtensionContext
+): Promise<void> {
+  try {
+    const mcpClient = await initMCPClient(context);
+    context.subscriptions.push(mcpClient);
+
+    const convexClient = await initConvexClient(context);
+    context.subscriptions.push(convexClient);
+
+    console.log('Codswallop: Phase 3 components initialised');
+  } catch (error) {
+    console.error('Codswallop: Failed to initialise Phase 3 components:', error);
+  }
 }
 
 /**
@@ -41,6 +64,8 @@ export function deactivate(): void {
   getVibeDetector().dispose();
   getCodeLensProvider().dispose();
   getDecorationManager()?.dispose();
+  getMCPClient()?.dispose();
+  getConvexClient()?.dispose();
   getEventBus().dispose();
 
   console.log('Codswallop extension deactivated');
@@ -53,27 +78,64 @@ function registerCommands(context: vscode.ExtensionContext): void {
   const startVibecheck = vscode.commands.registerCommand(
     'codswallop.startVibecheck',
     async (detection?: VibeDetection) => {
-      if (detection) {
-        const triggerLabels: Record<string, string> = {
-          line_spike: 'Line Spike',
-          high_complexity: 'High Complexity',
-          paste: 'Paste Detected',
-        };
-        const label = triggerLabels[detection.triggeredBy] || detection.triggeredBy;
-        vscode.window.showInformationMessage(
-          `Codswallop: Starting vibecheck for ${label} (${detection.indicatorValue})...`
+      if (!detection) {
+        vscode.window.showWarningMessage(
+          'Codswallop: No detection provided. Click on a CodeLens to start a vibecheck.'
         );
-        getEventBus().fire('vibecheck:started', {
-          id: `vc-${Date.now()}`,
-          uri: detection.uri,
-          line: detection.line,
-          triggeredBy: detection.triggeredBy,
-        });
-      } else {
-        vscode.window.showInformationMessage(
-          'Codswallop: Starting vibecheck...'
-        );
+        return;
       }
+
+      const triggerLabels: Record<string, string> = {
+        line_spike: 'Line Spike',
+        high_complexity: 'High Complexity',
+        paste: 'Paste Detected',
+      };
+      const label = triggerLabels[detection.triggeredBy] || detection.triggeredBy;
+      const vibecheckId = `vc-${Date.now()}`;
+
+      getEventBus().fire('vibecheck:started', {
+        id: vibecheckId,
+        uri: detection.uri,
+        line: detection.line,
+        triggeredBy: detection.triggeredBy,
+      });
+
+      const mcpClient = getMCPClient();
+      if (!mcpClient) {
+        vscode.window.showErrorMessage(
+          'Codswallop: MCP client not initialised'
+        );
+        return;
+      }
+
+      await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: `Codswallop: Generating vibecheck for ${label}...`,
+          cancellable: false,
+        },
+        async () => {
+          try {
+            const output = await mcpClient.generateVibecheck(detection);
+
+            showVibecheckPanel(
+              context.extensionUri,
+              vibecheckId,
+              output,
+              detection.codeSnippet,
+              detection.triggeredBy
+            );
+
+            getVibeDetector().clearDetection(detection.uri, detection.line);
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error ? error.message : 'Unknown error';
+            vscode.window.showErrorMessage(
+              `Codswallop: Failed to generate vibecheck: ${errorMessage}`
+            );
+          }
+        }
+      );
     }
   );
 
@@ -127,7 +189,27 @@ function registerCommands(context: vscode.ExtensionContext): void {
     }
   );
 
-  context.subscriptions.push(startVibecheck, showDetections, openDashboard);
+  const setApiKey = vscode.commands.registerCommand(
+    'codswallop.setApiKey',
+    async () => {
+      const mcpClient = getMCPClient();
+      if (!mcpClient) {
+        vscode.window.showErrorMessage(
+          'Codswallop: MCP client not initialised'
+        );
+        return;
+      }
+
+      const success = await mcpClient.promptForApiKey();
+      if (!success) {
+        vscode.window.showWarningMessage(
+          'Codswallop: API key not set'
+        );
+      }
+    }
+  );
+
+  context.subscriptions.push(startVibecheck, showDetections, openDashboard, setApiKey);
 }
 
 /**
