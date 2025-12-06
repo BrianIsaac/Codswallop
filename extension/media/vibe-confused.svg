@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <!-- Vibe mascot with spiral eyes - indicates high complexity -->
+
+  <!-- Body (cosmic blob) -->
+  <ellipse cx="8" cy="9" rx="5.5" ry="5" fill="#7C3AED"/>
+
+  <!-- Detective hat (slightly askew) -->
+  <path d="M3.5 4.5 L8 2 L12.5 4 L11.5 5.5 L4.5 5.5 Z" fill="#374151" transform="rotate(-5 8 4)"/>
+  <rect x="4.5" y="5" width="7" height="1" fill="#4B5563" transform="rotate(-5 8 4)"/>
+
+  <!-- Question marks floating -->
+  <text x="13" y="4" font-size="3" fill="#FF6347" font-family="Arial">?</text>
+  <text x="2" y="6" font-size="2.5" fill="#FF6347" font-family="Arial">?</text>
+
+  <!-- Spiral eyes (confused) -->
+  <circle cx="6" cy="8.5" r="1.5" fill="white"/>
+  <circle cx="10" cy="8.5" r="1.5" fill="white"/>
+  <!-- Spiral in left eye -->
+  <path d="M6 8.5 Q6.5 8 6 7.5 Q5.5 8 6 8.5 Q6.3 8.8 6 9" stroke="#FF6347" stroke-width="0.3" fill="none"/>
+  <!-- Spiral in right eye -->
+  <path d="M10 8.5 Q10.5 8 10 7.5 Q9.5 8 10 8.5 Q10.3 8.8 10 9" stroke="#FF6347" stroke-width="0.3" fill="none"/>
+
+  <!-- Confused wavy mouth -->
+  <path d="M5.5 11.5 Q6.5 12 7.5 11.5 Q8.5 11 9.5 11.5 Q10.5 12 10.5 11.5" stroke="#1F2937" stroke-width="0.5" fill="none"/>
+</svg>

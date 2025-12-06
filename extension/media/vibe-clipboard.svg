@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <!-- Vibe mascot holding clipboard - indicates paste detection -->
+
+  <!-- Body (cosmic blob) -->
+  <ellipse cx="8" cy="9" rx="5" ry="5" fill="#7C3AED"/>
+
+  <!-- Detective hat -->
+  <path d="M4 4 L8 2 L12 4 L11 5 L5 5 Z" fill="#374151"/>
+  <rect x="5" y="4.5" width="6" height="1" fill="#4B5563"/>
+
+  <!-- Clipboard (held in front) -->
+  <rect x="5.5" y="9" width="5" height="6" rx="0.5" fill="#9370DB" stroke="#4B5563" stroke-width="0.3"/>
+  <rect x="6.5" y="8.5" width="3" height="1" rx="0.3" fill="#4B5563"/>
+  <!-- Clipboard lines (representing text) -->
+  <line x1="6.3" y1="10.5" x2="9.7" y2="10.5" stroke="#E5E7EB" stroke-width="0.4"/>
+  <line x1="6.3" y1="11.5" x2="9.7" y2="11.5" stroke="#E5E7EB" stroke-width="0.4"/>
+  <line x1="6.3" y1="12.5" x2="8.5" y2="12.5" stroke="#E5E7EB" stroke-width="0.4"/>
+
+  <!-- Eyes (scrutinising) -->
+  <circle cx="6.5" cy="7.5" r="1.2" fill="white"/>
+  <circle cx="9.5" cy="7.5" r="1.2" fill="white"/>
+  <!-- Pupils looking at clipboard -->
+  <circle cx="6.8" cy="8" r="0.5" fill="#1F2937"/>
+  <circle cx="9.8" cy="8" r="0.5" fill="#1F2937"/>
+
+  <!-- Slight frown (suspicious) -->
+  <path d="M6.5 8.8 Q8 8.3 9.5 8.8" stroke="#1F2937" stroke-width="0.4" fill="none"/>
+</svg>

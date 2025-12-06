@@ -1,5 +1,10 @@
 import * as vscode from 'vscode';
 import { getEventBus } from './event-bus';
+import { getComplexityAnalyser } from './complexity-analyser';
+import { getDocumentTracker } from './document-tracker';
+import { getVibeDetector, VibeDetection } from './vibe-detector';
+import { registerCodeLensProvider, getCodeLensProvider } from './codelens-provider';
+import { initDecorationManager, getDecorationManager } from './decoration-manager';
 
 let statusBarItem: vscode.StatusBarItem;
 const disposables: vscode.Disposable[] = [];
@@ -19,6 +24,7 @@ export function activate(context: vscode.ExtensionContext): void {
   registerCommands(context);
   createStatusBar(context);
   setupEventListeners(context);
+  initVibeDetection(context);
 
   console.log('Codswallop extension activated successfully');
 }
@@ -30,6 +36,11 @@ export function deactivate(): void {
   console.log('Codswallop extension is deactivating...');
 
   disposables.forEach((d) => d.dispose());
+  getComplexityAnalyser().dispose();
+  getDocumentTracker().dispose();
+  getVibeDetector().dispose();
+  getCodeLensProvider().dispose();
+  getDecorationManager()?.dispose();
   getEventBus().dispose();
 
   console.log('Codswallop extension deactivated');
@@ -41,19 +52,61 @@ export function deactivate(): void {
 function registerCommands(context: vscode.ExtensionContext): void {
   const startVibecheck = vscode.commands.registerCommand(
     'codswallop.startVibecheck',
-    async () => {
-      vscode.window.showInformationMessage(
-        'Codswallop: Starting vibecheck...'
-      );
+    async (detection?: VibeDetection) => {
+      if (detection) {
+        const triggerLabels: Record<string, string> = {
+          line_spike: 'Line Spike',
+          high_complexity: 'High Complexity',
+          paste: 'Paste Detected',
+        };
+        const label = triggerLabels[detection.triggeredBy] || detection.triggeredBy;
+        vscode.window.showInformationMessage(
+          `Codswallop: Starting vibecheck for ${label} (${detection.indicatorValue})...`
+        );
+        getEventBus().fire('vibecheck:started', {
+          id: `vc-${Date.now()}`,
+          uri: detection.uri,
+          line: detection.line,
+          triggeredBy: detection.triggeredBy,
+        });
+      } else {
+        vscode.window.showInformationMessage(
+          'Codswallop: Starting vibecheck...'
+        );
+      }
     }
   );
 
   const showDetections = vscode.commands.registerCommand(
     'codswallop.showDetections',
     async () => {
-      vscode.window.showInformationMessage(
-        'Codswallop: No active detections'
-      );
+      const detections = getVibeDetector().getActiveDetections();
+      if (detections.length === 0) {
+        vscode.window.showInformationMessage('Codswallop: No active detections');
+        return;
+      }
+
+      const items = detections.map((d) => {
+        const labels: Record<string, string> = {
+          line_spike: 'Line Spike',
+          high_complexity: 'Complexity',
+          paste: 'Paste',
+        };
+        return {
+          label: `$(warning) ${labels[d.triggeredBy] || d.triggeredBy}: ${d.indicatorValue}`,
+          description: vscode.Uri.parse(d.uri).fsPath,
+          detail: `Line ${d.line + 1}`,
+          detection: d,
+        };
+      });
+
+      const selected = await vscode.window.showQuickPick(items, {
+        placeHolder: 'Select a detection to start vibecheck',
+      });
+
+      if (selected) {
+        vscode.commands.executeCommand('codswallop.startVibecheck', selected.detection);
+      }
     }
   );
 
@@ -148,4 +201,25 @@ function updateStatusBar(triggeredBy: string, indicatorValue: number): void {
 function resetStatusBar(): void {
   statusBarItem.text = '$(eye) Codswallop';
   statusBarItem.backgroundColor = undefined;
+}
+
+/**
+ * Initialises vibe detection components.
+ */
+function initVibeDetection(context: vscode.ExtensionContext): void {
+  const complexityAnalyser = getComplexityAnalyser();
+  const documentTracker = getDocumentTracker();
+  const vibeDetector = getVibeDetector();
+  const decorationManager = initDecorationManager(context);
+
+  registerCodeLensProvider(context);
+
+  context.subscriptions.push(
+    complexityAnalyser,
+    documentTracker,
+    vibeDetector,
+    decorationManager
+  );
+
+  console.log('Codswallop: Vibe detection engine initialised');
 }

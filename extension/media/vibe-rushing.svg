@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <!-- Vibe mascot with speed lines - indicates line spike -->
+
+  <!-- Speed lines -->
+  <line x1="1" y1="5" x2="4" y2="5" stroke="#FFA500" stroke-width="1" stroke-linecap="round"/>
+  <line x1="0" y1="8" x2="3" y2="8" stroke="#FFA500" stroke-width="1" stroke-linecap="round"/>
+  <line x1="1" y1="11" x2="4" y2="11" stroke="#FFA500" stroke-width="1" stroke-linecap="round"/>
+
+  <!-- Body (cosmic blob) -->
+  <ellipse cx="10" cy="8" rx="5" ry="5" fill="#7C3AED"/>
+
+  <!-- Detective hat -->
+  <path d="M6 4 L10 2 L14 4 L13 5 L7 5 Z" fill="#374151"/>
+  <rect x="7" y="4.5" width="6" height="1" fill="#4B5563"/>
+
+  <!-- Eyes (alert/excited) -->
+  <circle cx="8.5" cy="7.5" r="1.2" fill="white"/>
+  <circle cx="11.5" cy="7.5" r="1.2" fill="white"/>
+  <circle cx="9" cy="7.5" r="0.5" fill="#1F2937"/>
+  <circle cx="12" cy="7.5" r="0.5" fill="#1F2937"/>
+
+  <!-- Determined mouth -->
+  <path d="M8.5 10.5 Q10 11.5 11.5 10.5" stroke="#1F2937" stroke-width="0.5" fill="none"/>
+</svg>

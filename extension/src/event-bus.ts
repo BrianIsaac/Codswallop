@@ -39,6 +39,7 @@ export interface EventMap {
     indicatorValue: number;
     threshold: number;
     codeSnippet: string;
+    timestamp: number;
   };
 
   'vibe:cleared': {
