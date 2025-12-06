@@ -108,22 +108,33 @@ export class ConvexClient implements vscode.Disposable {
    */
   async syncUserFromAuth(): Promise<UserId | null> {
     const session = await getSession();
+    console.log('Codswallop: syncUserFromAuth called', {
+      hasSession: !!session,
+      hasClient: !!this.client,
+    });
+
     if (!session || !this.client) {
+      console.log('Codswallop: syncUserFromAuth - missing session or client');
       return null;
     }
 
     try {
-      // Call the Convex syncUser mutation which will use the JWT from auth
-      // The Convex client will automatically include the auth token
+      // Set the auth token on the Convex client before making the request
+      this.client.setAuth(session.accessToken);
+      console.log('Codswallop: Auth token set, calling users:syncUser mutation');
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const user = await (this.client as any).mutation('users:syncUser', {});
+      console.log('Codswallop: syncUser mutation result', { user });
 
       if (user && user._id) {
         this.userId = user._id as UserId;
+        console.log('Codswallop: User ID set to', this.userId);
         getEventBus().fire('convex:connected', { userId: String(user._id) });
         return this.userId;
       }
 
+      console.log('Codswallop: syncUser returned no user ID');
       return null;
     } catch (error) {
       console.error('Codswallop: Failed to sync user:', error);
@@ -199,8 +210,13 @@ export class ConvexClient implements vscode.Disposable {
     questions: VibecheckQuestion[],
     complexity?: number
   ): Promise<string | null> {
+    console.log('Codswallop: createVibecheck called');
+
     const token = await this.ensureAuthenticated();
+    console.log('Codswallop: ensureAuthenticated result', { hasToken: !!token });
+
     if (!token) {
+      console.log('Codswallop: No auth token, prompting login');
       const choice = await vscode.window.showWarningMessage(
         'Please login to track your vibechecks',
         'Login'
@@ -212,10 +228,18 @@ export class ConvexClient implements vscode.Disposable {
     }
 
     if (!this.client || !this.userId) {
+      console.log('Codswallop: createVibecheck - missing client or userId', {
+        hasClient: !!this.client,
+        hasUserId: !!this.userId,
+      });
       return null;
     }
 
     try {
+      // Ensure auth token is set before making the request
+      this.client.setAuth(token);
+      console.log('Codswallop: Calling vibechecks:create mutation');
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const vibecheckId = await (this.client as any).mutation('vibechecks:create', {
         userId: this.userId,
@@ -237,6 +261,8 @@ export class ConvexClient implements vscode.Disposable {
         })),
       });
 
+      console.log('Codswallop: vibechecks:create returned', { vibecheckId });
+
       await this.logActivity('vibecheck:created', {
         vibecheckId: String(vibecheckId),
         fileUri,
@@ -244,6 +270,7 @@ export class ConvexClient implements vscode.Disposable {
         triggeredBy,
       });
 
+      console.log('Codswallop: Vibecheck created successfully', { vibecheckId });
       return String(vibecheckId);
     } catch (error) {
       console.error('Codswallop: Failed to create vibecheck:', error);

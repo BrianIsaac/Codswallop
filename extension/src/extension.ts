@@ -57,6 +57,28 @@ async function initPhase3Components(
     const convexClient = await initConvexClient(context);
     context.subscriptions.push(convexClient);
 
+    // Sync user from existing session if available
+    console.log('Codswallop: Checking for existing session...', {
+      isConfigured: convexClient.isConfigured(),
+    });
+
+    if (convexClient.isConfigured()) {
+      const session = await getSession();
+      console.log('Codswallop: getSession result:', {
+        hasSession: !!session,
+        sessionId: session?.id,
+        accountLabel: session?.account?.label,
+      });
+
+      if (session) {
+        console.log('Codswallop: Found existing session, syncing user...');
+        const userId = await convexClient.syncUserFromAuth();
+        console.log('Codswallop: syncUserFromAuth result:', { userId });
+      } else {
+        console.log('Codswallop: No existing session found');
+      }
+    }
+
     console.log('Codswallop: Phase 3 components initialised');
   } catch (error) {
     console.error('Codswallop: Failed to initialise Phase 3 components:', error);
@@ -131,9 +153,43 @@ function registerCommands(context: vscode.ExtensionContext): void {
           try {
             const output = await mcpClient.generateVibecheck(detection);
 
+            // Persist vibecheck to database
+            const convexClient = getConvexClient();
+            let dbVibecheckId: string | null = null;
+
+            console.log('Codswallop: Attempting to persist vibecheck', {
+              hasConvexClient: !!convexClient,
+              isConfigured: convexClient?.isConfigured(),
+            });
+
+            if (convexClient?.isConfigured()) {
+              const uri = vscode.Uri.parse(detection.uri);
+              const ext = uri.fsPath.split('.').pop()?.toLowerCase() || '';
+              const languageMap: Record<string, string> = {
+                ts: 'typescript', tsx: 'typescript', js: 'javascript', jsx: 'javascript',
+                py: 'python', java: 'java', go: 'go', rs: 'rust', cpp: 'cpp', c: 'c',
+                cs: 'csharp', rb: 'ruby', php: 'php', swift: 'swift', kt: 'kotlin'
+              };
+              const language = languageMap[ext] || ext;
+
+              dbVibecheckId = await convexClient.createVibecheck(
+                detection.uri,
+                detection.line,
+                detection.codeSnippet,
+                language,
+                detection.triggeredBy,
+                detection.indicatorValue,
+                detection.threshold,
+                output.questions,
+                undefined
+              );
+            }
+
+            const finalVibecheckId = dbVibecheckId || vibecheckId;
+
             showVibecheckPanel(
               context.extensionUri,
-              vibecheckId,
+              finalVibecheckId,
               output,
               detection.codeSnippet,
               detection.triggeredBy
