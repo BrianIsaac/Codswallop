@@ -9,7 +9,7 @@
     "type": "git",
     "url": "https://github.com/BrianIsaac/Codswallop"
   },
-  "homepage": "https://codswallop.vercel.app",
+  "homepage": "https://codswallop-m6n9.vercel.app",
   "bugs": {
     "url": "https://github.com/BrianIsaac/Codswallop/issues"
   },
@@ -114,12 +114,12 @@
         },
         "codswallop.dashboardUrl": {
           "type": "string",
-          "default": "https://codswallop.vercel.app",
+          "default": "https://codswallop-m6n9.vercel.app",
           "description": "Dashboard URL for authentication"
         },
         "codswallop.mcpServerUrl": {
           "type": "string",
-          "default": "https://codswallop.vercel.app/api/mcp",
+          "default": "https://codswallop-m6n9.vercel.app/api/mcp",
           "description": "URL of the hosted MCP server for quiz generation"
         }
       }

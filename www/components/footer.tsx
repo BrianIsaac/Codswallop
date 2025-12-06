@@ -19,13 +19,13 @@ export function Footer() {
 
             <div className="flex items-center gap-6">
               <Link
-                href="#"
+                href="https://marketplace.visualstudio.com/items?itemName=codswallop.codswallop"
                 className="text-gray-600 hover:text-vibe-600 dark:text-gray-400 dark:hover:text-vibe-400 text-sm transition-colors"
               >
                 VS Code Extension
               </Link>
               <Link
-                href="https://app.codswallop.dev"
+                href="https://codswallop-m6n9.vercel.app/"
                 className="text-gray-600 hover:text-vibe-600 dark:text-gray-400 dark:hover:text-vibe-400 text-sm transition-colors"
               >
                 Dashboard

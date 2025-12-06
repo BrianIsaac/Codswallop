@@ -27,14 +27,14 @@ export function CTA() {
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <Link
-                  href="#"
+                  href="https://marketplace.visualstudio.com/items?itemName=codswallop.codswallop"
                   className="w-full sm:w-auto px-8 py-3 bg-white hover:bg-gray-100 text-vibe-700 rounded-lg font-medium transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-xl"
                 >
                   Get the Extension
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  href="https://app.codswallop.dev"
+                  href="https://codswallop-m6n9.vercel.app/"
                   className="w-full sm:w-auto px-8 py-3 border-2 border-white text-white hover:bg-white/10 rounded-lg font-medium transition-all hover:scale-105"
                 >
                   Open Dashboard

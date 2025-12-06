@@ -27,7 +27,7 @@ export function Header() {
               <Github className="h-5 w-5" />
             </Link>
             <Link
-              href="#"
+              href="https://marketplace.visualstudio.com/items?itemName=codswallop.codswallop"
               className="px-4 py-2 bg-vibe-600 hover:bg-vibe-700 text-white rounded-lg font-medium transition-all hover:scale-105 shadow-md shadow-vibe-600/25"
             >
               Get Extension

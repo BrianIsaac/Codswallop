@@ -50,14 +50,14 @@ export function Hero() {
               className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
             >
               <Link
-                href="#"
+                href="https://marketplace.visualstudio.com/items?itemName=codswallop.codswallop"
                 className="w-full sm:w-auto px-8 py-3 bg-vibe-600 hover:bg-vibe-700 text-white rounded-lg font-medium transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-vibe-600/25"
               >
                 Install Extension
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="https://app.codswallop.dev"
+                href="https://codswallop-m6n9.vercel.app/"
                 className="w-full sm:w-auto px-8 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-medium transition-all hover:scale-105"
               >
                 Teacher Dashboard
