@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Codswallop Dashboard',
-  description: 'Teacher dashboard for monitoring student vibe coding',
+  description: 'Educator dashboard for monitoring student vibe coding',
 };
 
 export default function RootLayout({

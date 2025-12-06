@@ -38,5 +38,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CodeLens integration for triggering vibechecks
 - Classroom join functionality for students
 - Convex backend integration for data sync
-- Teacher dashboard integration
+- Educator dashboard integration
 - Support for TypeScript, JavaScript, and Python

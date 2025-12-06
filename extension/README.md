@@ -37,9 +37,9 @@ An animated detective-style blob companion that reacts to your coding:
 - **Celebrating**: Star eyes and confetti when you pass
 - **Concerned**: Encouraging expression when you need more practice
 
-### Teacher Dashboard Integration
+### Educator Dashboard Integration
 
-Sync your progress with the teacher dashboard for:
+Sync your progress with the educator dashboard for:
 
 - Real-time activity monitoring
 - Class-wide analytics
@@ -50,7 +50,7 @@ Sync your progress with the teacher dashboard for:
 
 - VS Code 1.85.0 or higher
 - Internet connection for quiz generation
-- Optional: Classroom code from your teacher
+- Optional: Classroom code from your educator
 
 ## Getting Started
 
@@ -63,7 +63,7 @@ Sync your progress with the teacher dashboard for:
 
 1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
 2. Run "Codswallop: Login" to authenticate
-3. Run "Codswallop: Join Classroom" and enter your teacher's code
+3. Run "Codswallop: Join Classroom" and enter your educator's code
 
 ## Commands
 
@@ -74,7 +74,7 @@ Access via Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`):
 | Codswallop: Start Vibecheck | Manually trigger a quiz on selected code |
 | Codswallop: Show Detections | View current detections in the file |
 | Codswallop: Show Vibe Character | Display the animated companion |
-| Codswallop: Open Dashboard | Open the teacher dashboard |
+| Codswallop: Open Dashboard | Open the educator dashboard |
 | Codswallop: Login | Authenticate with your account |
 | Codswallop: Logout | Sign out of your account |
 | Codswallop: Join Classroom | Join a classroom with a code |
@@ -102,7 +102,7 @@ Configure via VS Code Settings (`Ctrl+,` / `Cmd+,`):
 
 ## Privacy
 
-Codswallop only analyses code when vibe patterns are detected. Code snippets are sent to Claude AI for quiz generation. If connected to a classroom, quiz results are synced with your teacher's dashboard.
+Codswallop only analyses code when vibe patterns are detected. Code snippets are sent to Claude AI for quiz generation. If connected to a classroom, quiz results are synced with your educator's dashboard.
 
 ## Feedback & Issues
 

@@ -3,7 +3,7 @@ export function TechStack() {
     {
       name: 'Clerk',
       purpose: 'Authentication',
-      description: 'Secure OAuth login for teachers and students',
+      description: 'Secure OAuth login for educators and students',
     },
     {
       name: 'Convex',

@@ -40,9 +40,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   if (user?.role !== 'teacher') {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
-        <h1 className="text-2xl font-bold mb-4">Teacher Access Required</h1>
+        <h1 className="text-2xl font-bold mb-4">Educator Access Required</h1>
         <p className="text-gray-400 mb-6">
-          This dashboard is for teachers only. Would you like to register as a teacher?
+          This dashboard is for educators only. Would you like to register as an educator?
         </p>
         <TeacherRegistration />
         <div className="mt-6 flex flex-col items-center gap-3">
@@ -80,7 +80,7 @@ function TeacherRegistration() {
       onClick={handleRequest}
       className="px-6 py-3 bg-vibe-600 hover:bg-vibe-700 rounded-lg font-medium transition-colors"
     >
-      Register as Teacher
+      Register as Educator
     </button>
   );
 }

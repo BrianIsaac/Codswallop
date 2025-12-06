@@ -49,7 +49,7 @@ export function Sidebar() {
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-vibe-400">Codswallop</h1>
-          <p className="text-sm text-gray-400">Teacher Dashboard</p>
+          <p className="text-sm text-gray-400">Educator Dashboard</p>
         </div>
         <div className="pt-1">
           <UserButton afterSignOutUrl="/" />
