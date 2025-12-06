@@ -47,21 +47,12 @@ function VSCodeLogo() {
   );
 }
 
-function MCPLogo() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-8 h-8">
-      <path d="M4 12l6-8 2 6 6-2-2 6 6 2-6 2 2 6-6-2-2 6-6-2 2-6-6-2 6-2z" />
-    </svg>
-  );
-}
-
 const techLogos: TechLogo[] = [
   { name: 'Clerk', icon: <ClerkLogo /> },
   { name: 'Convex', icon: <ConvexLogo /> },
   { name: 'Vercel', icon: <VercelLogo /> },
   { name: 'Claude AI', icon: <AnthropicLogo /> },
   { name: 'VS Code', icon: <VSCodeLogo /> },
-  { name: 'LeanMCP', icon: <MCPLogo /> },
 ];
 
 export function LogoMarquee() {

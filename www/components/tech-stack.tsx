@@ -25,11 +25,6 @@ export function TechStack() {
       purpose: 'Extension Platform',
       description: 'Seamless integration into the coding workflow',
     },
-    {
-      name: 'LeanMCP',
-      purpose: 'MCP Server',
-      description: 'Serverless hosting for AI quiz generation',
-    },
   ];
 
   return (
