@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Vibe brand colours */
+  --color-vibe-50: #f0fdf4;
+  --color-vibe-100: #dcfce7;
+  --color-vibe-200: #bbf7d0;
+  --color-vibe-300: #86efac;
+  --color-vibe-400: #4ade80;
+  --color-vibe-500: #22c55e;
+  --color-vibe-600: #16a34a;
+  --color-vibe-700: #15803d;
+  --color-vibe-800: #166534;
+  --color-vibe-900: #14532d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
