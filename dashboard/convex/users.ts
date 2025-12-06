@@ -71,3 +71,30 @@ export const getById = query({
     return await ctx.db.get(args.userId);
   },
 });
+
+/**
+ * Gets or creates a demo teacher for development/testing.
+ */
+export const getOrCreateDemoTeacher = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const existing = await ctx.db
+      .query('users')
+      .withIndex('by_email', (q) => q.eq('email', 'demo@codswallop.dev'))
+      .first();
+
+    if (existing) {
+      return existing;
+    }
+
+    const id = await ctx.db.insert('users', {
+      tokenIdentifier: 'demo_teacher_token',
+      email: 'demo@codswallop.dev',
+      displayName: 'Demo Teacher',
+      role: 'teacher',
+      createdAt: Date.now(),
+    });
+
+    return await ctx.db.get(id);
+  },
+});

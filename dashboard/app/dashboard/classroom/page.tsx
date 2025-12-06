@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
@@ -26,22 +26,30 @@ export default function ClassroomPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newClassroomName, setNewClassroomName] = useState('');
   const [newClassroomDesc, setNewClassroomDesc] = useState('');
+  const [teacherId, setTeacherId] = useState<Id<'users'> | null>(null);
 
-  // For demo purposes, using a mock teacher ID
-  // In production, this would come from authentication
-  const mockTeacherId = 'demo_teacher' as Id<'users'>;
+  const getOrCreateDemoTeacher = useMutation(api.users.getOrCreateDemoTeacher);
 
-  const classrooms = useQuery(api.classrooms.getByTeacher, {
-    teacherId: mockTeacherId,
-  }) as Classroom[] | undefined;
+  useEffect(() => {
+    getOrCreateDemoTeacher().then((teacher) => {
+      if (teacher) {
+        setTeacherId(teacher._id);
+      }
+    });
+  }, [getOrCreateDemoTeacher]);
+
+  const classrooms = useQuery(
+    api.classrooms.getByTeacher,
+    teacherId ? { teacherId } : 'skip'
+  ) as Classroom[] | undefined;
 
   const createClassroom = useMutation(api.classrooms.create);
 
   const handleCreate = async () => {
-    if (!newClassroomName.trim()) return;
+    if (!newClassroomName.trim() || !teacherId) return;
 
     await createClassroom({
-      teacherId: mockTeacherId,
+      teacherId,
       name: newClassroomName,
       description: newClassroomDesc || undefined,
     });

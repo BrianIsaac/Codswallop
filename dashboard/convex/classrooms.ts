@@ -56,6 +56,23 @@ export const getByTeacher = query({
 });
 
 /**
+ * Lists all classrooms (for demo/development without auth).
+ */
+export const listAll = query({
+  args: {},
+  handler: async (ctx) => {
+    const classrooms = await ctx.db.query('classrooms').collect();
+
+    return await Promise.all(
+      classrooms.map(async (classroom) => ({
+        ...classroom,
+        studentCount: classroom.studentIds.length,
+      }))
+    );
+  },
+});
+
+/**
  * Gets a classroom by its join code.
  */
 export const getByJoinCode = query({
