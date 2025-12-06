@@ -1,0 +1,14 @@
+.vscode/**
+.vscode-test/**
+src/**
+node_modules/**
+!node_modules/convex/**
+!node_modules/@anthropic-ai/**
+*.ts
+!*.d.ts
+.gitignore
+.eslintrc*
+tsconfig.json
+package-lock.json
+**/*.map
+*.vsix

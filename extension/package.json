@@ -5,6 +5,15 @@
   "version": "0.1.0",
   "publisher": "codswallop",
   "license": "SEE LICENSE IN LICENCE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BrianIsaac/Codswallop"
+  },
+  "homepage": "https://codswallop.vercel.app",
+  "bugs": {
+    "url": "https://github.com/BrianIsaac/Codswallop/issues"
+  },
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -105,8 +114,8 @@
         },
         "codswallop.dashboardUrl": {
           "type": "string",
-          "default": "http://localhost:3000",
-          "description": "Dashboard URL for authentication (e.g., https://codswallop.vercel.app)"
+          "default": "https://codswallop.vercel.app",
+          "description": "Dashboard URL for authentication"
         },
         "codswallop.mcpServerUrl": {
           "type": "string",
