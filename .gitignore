@@ -227,3 +227,6 @@ out/
 # Convex
 _generated/
 .env.local
+
+# Mac OS
+*.DS_STORE

@@ -221,6 +221,74 @@ export const remove = mutation({
 });
 
 /**
+ * Joins a classroom by join code.
+ * Requires authentication.
+ */
+export const joinByCode = mutation({
+  args: { joinCode: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error('Not authenticated');
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_token', (q) => q.eq('tokenIdentifier', identity.tokenIdentifier))
+      .first();
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const classroom = await ctx.db
+      .query('classrooms')
+      .withIndex('by_code', (q) => q.eq('joinCode', args.joinCode.toUpperCase()))
+      .first();
+
+    if (!classroom) {
+      throw new Error('Classroom not found');
+    }
+
+    if (classroom.studentIds.includes(user._id)) {
+      return { success: true, message: 'Already in classroom', classroomId: classroom._id };
+    }
+
+    await ctx.db.patch(classroom._id, {
+      studentIds: [...classroom.studentIds, user._id],
+    });
+
+    return { success: true, message: 'Joined classroom', classroomId: classroom._id };
+  },
+});
+
+/**
+ * Gets the classroom the current user is a member of.
+ * Requires authentication.
+ */
+export const getMyClassroom = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return null;
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_token', (q) => q.eq('tokenIdentifier', identity.tokenIdentifier))
+      .first();
+
+    if (!user) {
+      return null;
+    }
+
+    const classrooms = await ctx.db.query('classrooms').collect();
+    return classrooms.find((c) => c.studentIds.includes(user._id)) ?? null;
+  },
+});
+
+/**
  * Gets classroom statistics.
  */
 export const getStats = query({

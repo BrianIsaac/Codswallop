@@ -11,6 +11,8 @@ import { showVibecheckPanel } from './vibecheck-panel';
 import { initVibePanel, getVibePanelProvider } from './vibe-panel-provider';
 import { getVibeStateMachine } from './vibe-state-machine';
 import { getVibeActivityTracker } from './vibe-activity-tracker';
+import { initAuthProvider, login, logout, getSession } from './auth-provider';
+import { initStatusBar } from './status-bar';
 
 let statusBarItem: vscode.StatusBarItem;
 const disposables: vscode.Disposable[] = [];
@@ -27,8 +29,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     return;
   }
 
+  // Initialize authentication provider
+  const authProvider = initAuthProvider(context);
+  context.subscriptions.push(authProvider);
+
   registerCommands(context);
   createStatusBar(context);
+  initStatusBar(context);
   setupEventListeners(context);
   initVibeDetection(context);
   initVibePanel(context);
@@ -215,7 +222,154 @@ function registerCommands(context: vscode.ExtensionContext): void {
     }
   );
 
-  context.subscriptions.push(startVibecheck, showDetections, openDashboard, setApiKey);
+  const clearApiKey = vscode.commands.registerCommand(
+    'codswallop.clearApiKey',
+    async () => {
+      const mcpClient = getMCPClient();
+      if (!mcpClient) {
+        vscode.window.showErrorMessage(
+          'Codswallop: MCP client not initialised'
+        );
+        return;
+      }
+
+      await mcpClient.clearApiKey();
+      vscode.window.showInformationMessage(
+        'Codswallop: API key cleared successfully'
+      );
+    }
+  );
+
+  const loginCommand = vscode.commands.registerCommand(
+    'codswallop.login',
+    async () => {
+      try {
+        const session = await login();
+        vscode.window.showInformationMessage(
+          `Logged in as ${session.account.label}`
+        );
+        // Sync user with Convex after login
+        const convexClient = getConvexClient();
+        if (convexClient) {
+          await convexClient.syncUserFromAuth();
+        }
+      } catch (error) {
+        vscode.window.showErrorMessage(
+          `Login failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
+      }
+    }
+  );
+
+  const logoutCommand = vscode.commands.registerCommand(
+    'codswallop.logout',
+    async () => {
+      await logout();
+      vscode.window.showInformationMessage('Logged out of Codswallop');
+    }
+  );
+
+  const showAuthStatusCommand = vscode.commands.registerCommand(
+    'codswallop.showAuthStatus',
+    async () => {
+      const session = await getSession();
+      if (session) {
+        vscode.window.showInformationMessage(
+          `Logged in as ${session.account.label}`
+        );
+      } else {
+        vscode.window.showInformationMessage('Not logged in');
+      }
+    }
+  );
+
+  const joinClassroomCommand = vscode.commands.registerCommand(
+    'codswallop.joinClassroom',
+    async () => {
+      const session = await getSession();
+      if (!session) {
+        const choice = await vscode.window.showWarningMessage(
+          'Please login first to join a classroom',
+          'Login'
+        );
+        if (choice === 'Login') {
+          await vscode.commands.executeCommand('codswallop.login');
+        }
+        return;
+      }
+
+      const joinCode = await vscode.window.showInputBox({
+        prompt: 'Enter the 6-character classroom join code',
+        placeHolder: 'ABC123',
+        validateInput: (value) => {
+          if (value.length !== 6) {
+            return 'Join code must be 6 characters';
+          }
+          if (!/^[A-Za-z0-9]+$/.test(value)) {
+            return 'Join code must be alphanumeric';
+          }
+          return null;
+        },
+      });
+
+      if (!joinCode) {
+        return;
+      }
+
+      try {
+        const convexClient = getConvexClient();
+        if (!convexClient) {
+          vscode.window.showErrorMessage(
+            'Codswallop: Convex client not initialised. Please configure convexUrl in settings.'
+          );
+          return;
+        }
+
+        const result = await convexClient.joinClassroom(joinCode.toUpperCase());
+
+        if (result.success) {
+          if (result.message === 'Already in classroom') {
+            vscode.window.showInformationMessage(
+              'You are already a member of this classroom'
+            );
+          } else {
+            vscode.window.showInformationMessage(
+              'Successfully joined classroom!'
+            );
+          }
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+        // Handle specific error cases with user-friendly messages
+        if (errorMessage.includes('Classroom not found')) {
+          vscode.window.showWarningMessage(
+            'Invalid classroom code. Please check the code and try again.'
+          );
+        } else if (errorMessage.includes('Not authenticated')) {
+          vscode.window.showWarningMessage(
+            'Please login first to join a classroom.'
+          );
+        } else {
+          vscode.window.showErrorMessage(
+            `Failed to join classroom: ${errorMessage}`
+          );
+        }
+      }
+    }
+  );
+
+  context.subscriptions.push(
+    startVibecheck,
+    showDetections,
+    openDashboard,
+    setApiKey,
+    clearApiKey,
+    loginCommand,
+    logoutCommand,
+    showAuthStatusCommand,
+    joinClassroomCommand
+  );
 }
 
 /**

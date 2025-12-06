@@ -2,63 +2,85 @@ import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 
 /**
- * Creates or updates a user record.
+ * Syncs the authenticated Clerk user to Convex.
+ * Creates a new user if they don't exist, or updates existing user data.
  */
-export const createOrUpdate = mutation({
-  args: {
-    tokenIdentifier: v.string(),
-    email: v.string(),
-    displayName: v.string(),
-    role: v.union(v.literal('student'), v.literal('teacher')),
-  },
-  handler: async (ctx, args) => {
+export const syncUser = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error('Not authenticated');
+    }
+
     const existing = await ctx.db
       .query('users')
-      .withIndex('by_token', (q) => q.eq('tokenIdentifier', args.tokenIdentifier))
+      .withIndex('by_token', (q) => q.eq('tokenIdentifier', identity.tokenIdentifier))
       .first();
 
     if (existing) {
       await ctx.db.patch(existing._id, {
-        email: args.email,
-        displayName: args.displayName,
-        role: args.role,
+        email: identity.email ?? existing.email,
+        displayName: identity.name ?? existing.displayName,
+        imageUrl: identity.pictureUrl,
       });
-      return existing._id;
+      return existing;
     }
 
-    return await ctx.db.insert('users', {
-      tokenIdentifier: args.tokenIdentifier,
-      email: args.email,
-      displayName: args.displayName,
-      role: args.role,
+    const userId = await ctx.db.insert('users', {
+      tokenIdentifier: identity.tokenIdentifier,
+      clerkId: identity.subject,
+      email: identity.email ?? '',
+      displayName: identity.name ?? 'Anonymous',
+      imageUrl: identity.pictureUrl,
+      role: 'student',
       createdAt: Date.now(),
     });
+
+    return await ctx.db.get(userId);
   },
 });
 
 /**
- * Gets a user by their authentication token.
+ * Gets the currently authenticated user.
  */
-export const getByToken = query({
-  args: { tokenIdentifier: v.string() },
-  handler: async (ctx, args) => {
+export const getCurrentUser = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return null;
+    }
+
     return await ctx.db
       .query('users')
-      .withIndex('by_token', (q) => q.eq('tokenIdentifier', args.tokenIdentifier))
+      .withIndex('by_token', (q) => q.eq('tokenIdentifier', identity.tokenIdentifier))
       .first();
   },
 });
 
 /**
- * Gets a user by their email address.
+ * Requests teacher role for the current user.
  */
-export const getByEmail = query({
-  args: { email: v.string() },
-  handler: async (ctx, args) => {
-    return await ctx.db
+export const requestTeacherRole = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error('Not authenticated');
+    }
+
+    const user = await ctx.db
       .query('users')
-      .withIndex('by_email', (q) => q.eq('email', args.email))
+      .withIndex('by_token', (q) => q.eq('tokenIdentifier', identity.tokenIdentifier))
       .first();
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    await ctx.db.patch(user._id, { role: 'teacher' });
+    return await ctx.db.get(user._id);
   },
 });
 
@@ -69,32 +91,5 @@ export const getById = query({
   args: { userId: v.id('users') },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.userId);
-  },
-});
-
-/**
- * Gets or creates a demo teacher for development/testing.
- */
-export const getOrCreateDemoTeacher = mutation({
-  args: {},
-  handler: async (ctx) => {
-    const existing = await ctx.db
-      .query('users')
-      .withIndex('by_email', (q) => q.eq('email', 'demo@codswallop.dev'))
-      .first();
-
-    if (existing) {
-      return existing;
-    }
-
-    const id = await ctx.db.insert('users', {
-      tokenIdentifier: 'demo_teacher_token',
-      email: 'demo@codswallop.dev',
-      displayName: 'Demo Teacher',
-      role: 'teacher',
-      createdAt: Date.now(),
-    });
-
-    return await ctx.db.get(id);
   },
 });

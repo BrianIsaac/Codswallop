@@ -12,6 +12,7 @@ import * as vscode from 'vscode';
 import { ConvexHttpClient } from 'convex/browser';
 import { getEventBus, IndicatorType } from './event-bus';
 import { VibecheckQuestion } from './mcp/schemas/vibecheck-output';
+import { getSession } from './auth-provider';
 
 type UserId = string;
 
@@ -86,6 +87,51 @@ export class ConvexClient implements vscode.Disposable {
   }
 
   /**
+   * Checks if the user is authenticated and returns the access token.
+   *
+   * Returns:
+   *     The access token if authenticated, null otherwise.
+   */
+  async ensureAuthenticated(): Promise<string | null> {
+    const session = await getSession();
+    if (!session) {
+      return null;
+    }
+    return session.accessToken;
+  }
+
+  /**
+   * Syncs the user from the current authentication session to Convex.
+   *
+   * Returns:
+   *     The user ID if successful, null otherwise.
+   */
+  async syncUserFromAuth(): Promise<UserId | null> {
+    const session = await getSession();
+    if (!session || !this.client) {
+      return null;
+    }
+
+    try {
+      // Call the Convex syncUser mutation which will use the JWT from auth
+      // The Convex client will automatically include the auth token
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const user = await (this.client as any).mutation('users:syncUser', {});
+
+      if (user && user._id) {
+        this.userId = user._id as UserId;
+        getEventBus().fire('convex:connected', { userId: String(user._id) });
+        return this.userId;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Codswallop: Failed to sync user:', error);
+      return null;
+    }
+  }
+
+  /**
    * Creates or updates the current user.
    *
    * Args:
@@ -153,6 +199,18 @@ export class ConvexClient implements vscode.Disposable {
     questions: VibecheckQuestion[],
     complexity?: number
   ): Promise<string | null> {
+    const token = await this.ensureAuthenticated();
+    if (!token) {
+      const choice = await vscode.window.showWarningMessage(
+        'Please login to track your vibechecks',
+        'Login'
+      );
+      if (choice === 'Login') {
+        await vscode.commands.executeCommand('codswallop.login');
+      }
+      return null;
+    }
+
     if (!this.client || !this.userId) {
       return null;
     }
@@ -294,6 +352,34 @@ export class ConvexClient implements vscode.Disposable {
     } catch (error) {
       console.error('Codswallop: Failed to update metrics:', error);
     }
+  }
+
+  /**
+   * Joins a classroom by join code.
+   *
+   * Args:
+   *     joinCode: The 6-character classroom join code.
+   *
+   * Returns:
+   *     Object with success status and message.
+   */
+  async joinClassroom(joinCode: string): Promise<{ success: boolean; message: string }> {
+    if (!this.client) {
+      throw new Error('Convex client not initialised');
+    }
+
+    const token = await this.ensureAuthenticated();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+
+    // Set the auth token on the Convex client before making the request
+    this.client.setAuth(token);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return await (this.client as any).mutation('classrooms:joinByCode', {
+      joinCode,
+    });
   }
 
   /**
