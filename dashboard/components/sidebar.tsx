@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { UserButton } from '@clerk/nextjs';
 import clsx from 'clsx';
 
 interface NavItem {
@@ -40,25 +41,25 @@ const navItems: NavItem[] = [
   },
 ];
 
-/**
- * Sidebar navigation component for the dashboard.
- *
- * Returns:
- *     The sidebar navigation element with links.
- */
-export function Sidebar(): React.ReactNode {
+export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-gray-900 text-white min-h-screen p-4">
-      <div className="mb-8">
-        <h1 className="text-xl font-bold text-vibe-400">Codswallop</h1>
-        <p className="text-gray-400 text-sm">Teacher Dashboard</p>
+    <aside className="w-64 min-h-screen bg-gray-900 text-white p-4 flex flex-col">
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-vibe-400">Codswallop</h1>
+          <p className="text-sm text-gray-400">Teacher Dashboard</p>
+        </div>
+        <div className="pt-1">
+          <UserButton afterSignOutUrl="/" />
+        </div>
       </div>
 
-      <nav className="space-y-2">
+      <nav className="flex-1 space-y-2">
         {navItems.map((item) => {
-          const isActive = pathname === item.href ||
+          const isActive =
+            pathname === item.href ||
             (item.href !== '/dashboard' && pathname.startsWith(item.href));
 
           return (
@@ -66,10 +67,10 @@ export function Sidebar(): React.ReactNode {
               key={item.href}
               href={item.href}
               className={clsx(
-                'flex items-center gap-3 px-4 py-2 rounded-lg transition-colors',
+                'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
                 isActive
                   ? 'bg-vibe-600 text-white'
-                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
               )}
             >
               {item.icon}

@@ -1,25 +1,79 @@
-import { Sidebar } from '@/components/sidebar';
+'use client';
 
-/**
- * Layout for the dashboard pages with sidebar navigation.
- *
- * Args:
- *     children: Child pages to render in the main content area.
- *
- * Returns:
- *     The dashboard layout with sidebar and main content.
- */
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+import { ReactNode } from 'react';
+import { useQuery, useMutation } from 'convex/react';
+import { useConvexAuth } from 'convex/react';
+import { UserButton } from '@clerk/nextjs';
+import { api } from '@/convex/_generated/api';
+import { Sidebar } from '@/components/sidebar';
+import { useSyncUser } from '@/hooks/use-sync-user';
+
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
+  useSyncUser();
+
+  const user = useQuery(
+    api.users.getCurrentUser,
+    isAuthenticated ? {} : 'skip'
+  );
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-vibe-500" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  if (user === undefined) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-vibe-500" />
+      </div>
+    );
+  }
+
+  if (user?.role !== 'teacher') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
+        <h1 className="text-2xl font-bold mb-4">Teacher Access Required</h1>
+        <p className="text-gray-400 mb-6">
+          This dashboard is for teachers only. Would you like to register as a teacher?
+        </p>
+        <TeacherRegistration />
+        <div className="mt-4">
+          <UserButton afterSignOutUrl="/" />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
       <Sidebar />
-      <main className="flex-1 p-8 bg-gray-50 dark:bg-gray-800">
-        {children}
-      </main>
+      <main className="flex-1 p-6">{children}</main>
     </div>
+  );
+}
+
+function TeacherRegistration() {
+  const requestTeacher = useMutation(api.users.requestTeacherRole);
+
+  const handleRequest = async () => {
+    await requestTeacher();
+    window.location.reload();
+  };
+
+  return (
+    <button
+      onClick={handleRequest}
+      className="px-6 py-3 bg-vibe-600 hover:bg-vibe-700 rounded-lg font-medium transition-colors"
+    >
+      Register as Teacher
+    </button>
   );
 }

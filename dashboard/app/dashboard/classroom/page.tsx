@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
+import { useConvexAuth } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import Link from 'next/link';
@@ -16,40 +17,29 @@ interface Classroom {
   createdAt: number;
 }
 
-/**
- * Classroom management page for creating and viewing classrooms.
- *
- * Returns:
- *     The classroom list with create functionality.
- */
 export default function ClassroomPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newClassroomName, setNewClassroomName] = useState('');
   const [newClassroomDesc, setNewClassroomDesc] = useState('');
-  const [teacherId, setTeacherId] = useState<Id<'users'> | null>(null);
 
-  const getOrCreateDemoTeacher = useMutation(api.users.getOrCreateDemoTeacher);
-
-  useEffect(() => {
-    getOrCreateDemoTeacher().then((teacher) => {
-      if (teacher) {
-        setTeacherId(teacher._id);
-      }
-    });
-  }, [getOrCreateDemoTeacher]);
+  const { isAuthenticated } = useConvexAuth();
+  const currentUser = useQuery(
+    api.users.getCurrentUser,
+    isAuthenticated ? {} : 'skip'
+  );
 
   const classrooms = useQuery(
     api.classrooms.getByTeacher,
-    teacherId ? { teacherId } : 'skip'
+    currentUser?._id ? { teacherId: currentUser._id } : 'skip'
   ) as Classroom[] | undefined;
 
   const createClassroom = useMutation(api.classrooms.create);
 
   const handleCreate = async () => {
-    if (!newClassroomName.trim() || !teacherId) return;
+    if (!newClassroomName.trim() || !currentUser?._id) return;
 
     await createClassroom({
-      teacherId,
+      teacherId: currentUser._id,
       name: newClassroomName,
       description: newClassroomDesc || undefined,
     });
