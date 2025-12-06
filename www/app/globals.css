@@ -11,17 +11,24 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Vibe brand colours */
-  --color-vibe-50: #f0fdf4;
-  --color-vibe-100: #dcfce7;
-  --color-vibe-200: #bbf7d0;
-  --color-vibe-300: #86efac;
-  --color-vibe-400: #4ade80;
-  --color-vibe-500: #22c55e;
-  --color-vibe-600: #16a34a;
-  --color-vibe-700: #15803d;
-  --color-vibe-800: #166534;
-  --color-vibe-900: #14532d;
+  /* Vibe character colour palette - indigo/purple theme */
+  --color-vibe-50: #eef2ff;
+  --color-vibe-100: #e0e7ff;
+  --color-vibe-200: #c7d2fe;
+  --color-vibe-300: #a5b4fc;
+  --color-vibe-400: #818cf8;
+  --color-vibe-500: #6366f1;
+  --color-vibe-600: #4f46e5;
+  --color-vibe-700: #4338ca;
+  --color-vibe-800: #3730a3;
+  --color-vibe-900: #312e81;
+
+  /* Extended vibe palette */
+  --color-vibe-glow: #a78bfa;
+  --color-vibe-dark: #1a1744;
+  --color-vibe-accent: #10b981;
+  --color-vibe-sparkle: #f59e0b;
+  --color-vibe-secondary: #8b5cf6;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -35,4 +42,28 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animation utilities */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.4)); }
+  50% { filter: drop-shadow(0 0 40px rgba(99, 102, 241, 0.6)); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
