@@ -40,6 +40,10 @@
       {
         "command": "codswallop.setApiKey",
         "title": "Codswallop: Set Anthropic API Key"
+      },
+      {
+        "command": "codswallop.showVibe",
+        "title": "Codswallop: Show Vibe Character"
       }
     ],
     "configuration": {

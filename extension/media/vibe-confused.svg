@@ -4,9 +4,13 @@
   <!-- Body (cosmic blob) -->
   <ellipse cx="8" cy="9" rx="5.5" ry="5" fill="#7C3AED"/>
 
-  <!-- Detective hat (slightly askew) -->
-  <path d="M3.5 4.5 L8 2 L12.5 4 L11.5 5.5 L4.5 5.5 Z" fill="#374151" transform="rotate(-5 8 4)"/>
-  <rect x="4.5" y="5" width="7" height="1" fill="#4B5563" transform="rotate(-5 8 4)"/>
+  <!-- Top hat (slightly askew) -->
+  <g transform="rotate(-5 8 4)">
+    <ellipse cx="8" cy="5.5" rx="3.5" ry="0.8" fill="#374151"/>
+    <rect x="5.5" y="1.5" width="5" height="4" rx="0.5" fill="#374151"/>
+    <rect x="5.5" y="1" width="5" height="0.8" rx="0.3" fill="#374151"/>
+    <rect x="5.5" y="4.5" width="5" height="0.8" fill="#10B981"/>
+  </g>
 
   <!-- Question marks floating -->
   <text x="13" y="4" font-size="3" fill="#FF6347" font-family="Arial">?</text>

@@ -4,9 +4,11 @@
   <!-- Body (cosmic blob) -->
   <ellipse cx="8" cy="9" rx="5" ry="5" fill="#7C3AED"/>
 
-  <!-- Detective hat -->
-  <path d="M4 4 L8 2 L12 4 L11 5 L5 5 Z" fill="#374151"/>
-  <rect x="5" y="4.5" width="6" height="1" fill="#4B5563"/>
+  <!-- Top hat -->
+  <ellipse cx="8" cy="5" rx="3.5" ry="0.8" fill="#374151"/>
+  <rect x="5.5" y="1" width="5" height="4" rx="0.5" fill="#374151"/>
+  <rect x="5.5" y="0.5" width="5" height="0.8" rx="0.3" fill="#374151"/>
+  <rect x="5.5" y="4" width="5" height="0.8" fill="#10B981"/>
 
   <!-- Clipboard (held in front) -->
   <rect x="5.5" y="9" width="5" height="6" rx="0.5" fill="#9370DB" stroke="#4B5563" stroke-width="0.3"/>

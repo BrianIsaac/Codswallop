@@ -8,6 +8,9 @@ import { initDecorationManager, getDecorationManager } from './decoration-manage
 import { initMCPClient, getMCPClient } from './mcp-client';
 import { initConvexClient, getConvexClient } from './convex-client';
 import { showVibecheckPanel } from './vibecheck-panel';
+import { initVibePanel, getVibePanelProvider } from './vibe-panel-provider';
+import { getVibeStateMachine } from './vibe-state-machine';
+import { getVibeActivityTracker } from './vibe-activity-tracker';
 
 let statusBarItem: vscode.StatusBarItem;
 const disposables: vscode.Disposable[] = [];
@@ -28,6 +31,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   createStatusBar(context);
   setupEventListeners(context);
   initVibeDetection(context);
+  initVibePanel(context);
   await initPhase3Components(context);
 
   console.log('Codswallop extension activated successfully');
@@ -66,6 +70,8 @@ export function deactivate(): void {
   getDecorationManager()?.dispose();
   getMCPClient()?.dispose();
   getConvexClient()?.dispose();
+  getVibeStateMachine().dispose();
+  getVibeActivityTracker().dispose();
   getEventBus().dispose();
 
   console.log('Codswallop extension deactivated');
