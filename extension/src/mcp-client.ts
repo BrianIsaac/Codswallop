@@ -2,8 +2,8 @@
  * MCP Client for Codswallop extension.
  *
  * Manages the connection to the vibecheck generation service,
- * handles API key storage via VSCode's SecretStorage, and provides
- * a clean interface for generating vibechecks.
+ * supporting both the hosted MCP server (via LeanMCP) and local
+ * API key fallback via VSCode's SecretStorage.
  */
 
 import * as vscode from 'vscode';
@@ -19,8 +19,28 @@ import { getSession } from './auth-provider';
 
 const API_KEY_SECRET_KEY = 'codswallop.anthropicApiKey';
 
+/** MCP JSON-RPC response structure. */
+interface MCPResponse {
+  jsonrpc: '2.0';
+  id: string | number;
+  result?: {
+    content: Array<{
+      type: 'text';
+      text: string;
+    }>;
+  };
+  error?: {
+    code: number;
+    message: string;
+  };
+}
+
 /**
  * Client for interacting with the vibecheck generation service.
+ *
+ * Supports two modes:
+ * 1. Hosted MCP server (when user is logged in via Clerk)
+ * 2. Local Anthropic API key (fallback)
  */
 export class MCPClient implements vscode.Disposable {
   private secretStorage: vscode.SecretStorage;
@@ -33,9 +53,6 @@ export class MCPClient implements vscode.Disposable {
 
   /**
    * Initialises the MCP client by loading the API key from storage.
-   *
-   * Returns:
-   *     A promise that resolves when initialisation is complete.
    */
   async initialise(): Promise<void> {
     const apiKey = await this.secretStorage.get(API_KEY_SECRET_KEY);
@@ -63,27 +80,26 @@ export class MCPClient implements vscode.Disposable {
   private configureService(apiKey: string): void {
     getVibecheckService().setApiKey(apiKey);
     this.configured = true;
-    console.log('Codswallop: Vibecheck service configured');
+    console.log('Codswallop: Vibecheck service configured with local API key');
   }
 
   /**
    * Checks if the client is configured with an API key.
-   *
-   * Returns:
-   *     True if an API key has been set.
    */
   isConfigured(): boolean {
     return this.configured;
   }
 
   /**
+   * Gets the MCP server URL from configuration.
+   */
+  private getMcpServerUrl(): string {
+    const config = vscode.workspace.getConfiguration('codswallop');
+    return config.get<string>('mcpServerUrl') || 'https://codswallop-mcp.leanmcp.com';
+  }
+
+  /**
    * Sets the Anthropic API key, storing it securely.
-   *
-   * Args:
-   *     apiKey: The Anthropic API key.
-   *
-   * Returns:
-   *     A promise that resolves when the key is stored.
    */
   async setApiKey(apiKey: string): Promise<void> {
     await this.secretStorage.store(API_KEY_SECRET_KEY, apiKey);
@@ -92,9 +108,6 @@ export class MCPClient implements vscode.Disposable {
 
   /**
    * Clears the stored Anthropic API key.
-   *
-   * Returns:
-   *     A promise that resolves when the key is cleared.
    */
   async clearApiKey(): Promise<void> {
     await this.secretStorage.delete(API_KEY_SECRET_KEY);
@@ -104,9 +117,6 @@ export class MCPClient implements vscode.Disposable {
 
   /**
    * Prompts the user to enter their Anthropic API key.
-   *
-   * Returns:
-   *     A promise that resolves to true if the key was set, false otherwise.
    */
   async promptForApiKey(): Promise<boolean> {
     const apiKey = await vscode.window.showInputBox({
@@ -136,61 +146,124 @@ export class MCPClient implements vscode.Disposable {
   /**
    * Generates a vibecheck quiz for a detection.
    *
-   * Args:
-   *     detection: The vibe detection that triggered the vibecheck.
-   *
-   * Returns:
-   *     A promise resolving to the generated vibecheck output.
-   *
-   * Raises:
-   *     Error: If the client is not configured or generation fails.
+   * Tries the hosted MCP server first (if logged in), falls back to local API key.
    */
   async generateVibecheck(detection: VibeDetection): Promise<VibecheckOutput> {
-    // Check if user is logged in or has API key configured
     const session = await getSession();
 
-    if (!this.configured && !session) {
-      // Neither logged in nor API key configured - offer choice
-      const choice = await vscode.window.showInformationMessage(
-        'To generate vibechecks, you can either login to use the hosted service or provide your own Anthropic API key.',
-        'Login',
-        'Use API Key'
-      );
-
-      if (choice === 'Login') {
-        await vscode.commands.executeCommand('codswallop.login');
-        // Check again after login
-        const newSession = await getSession();
-        if (!newSession) {
-          throw new Error('Login cancelled or failed');
+    // Try hosted MCP server first if user is logged in
+    if (session) {
+      try {
+        console.log('Codswallop: Attempting hosted MCP server...');
+        return await this.generateVibecheckViaHostedMcp(detection, session.accessToken);
+      } catch (error) {
+        console.warn('Codswallop: Hosted MCP server failed, checking fallback...', error);
+        // If hosted service fails and we have local API key, use that
+        if (this.configured) {
+          console.log('Codswallop: Falling back to local API key');
+          return this.generateVibecheckViaLocalService(detection);
         }
-      } else if (choice === 'Use API Key') {
-        const configured = await this.promptForApiKey();
-        if (!configured) {
-          throw new Error('API key not configured');
-        }
-      } else {
-        throw new Error('Vibecheck generation cancelled');
-      }
-    } else if (!this.configured && session) {
-      // Logged in but no API key - this is fine, will use hosted service in Phase 5
-      // For now, prompt for API key as hosted service isn't implemented yet
-      const choice = await vscode.window.showInformationMessage(
-        'Hosted vibecheck service is not yet available. Please provide your Anthropic API key to continue.',
-        'Use API Key',
-        'Cancel'
-      );
-
-      if (choice === 'Use API Key') {
-        const configured = await this.promptForApiKey();
-        if (!configured) {
-          throw new Error('API key not configured');
-        }
-      } else {
-        throw new Error('Vibecheck generation cancelled');
+        // Re-throw if no fallback available
+        throw error;
       }
     }
 
+    // Not logged in - check for local API key
+    if (this.configured) {
+      return this.generateVibecheckViaLocalService(detection);
+    }
+
+    // Neither logged in nor API key configured - offer choice
+    const choice = await vscode.window.showInformationMessage(
+      'To generate vibechecks, you can either login to use the hosted service or provide your own Anthropic API key.',
+      'Login',
+      'Use API Key'
+    );
+
+    if (choice === 'Login') {
+      await vscode.commands.executeCommand('codswallop.login');
+      const newSession = await getSession();
+      if (newSession) {
+        return this.generateVibecheckViaHostedMcp(detection, newSession.accessToken);
+      }
+      throw new Error('Login cancelled or failed');
+    } else if (choice === 'Use API Key') {
+      const configured = await this.promptForApiKey();
+      if (configured) {
+        return this.generateVibecheckViaLocalService(detection);
+      }
+      throw new Error('API key not configured');
+    }
+
+    throw new Error('Vibecheck generation cancelled');
+  }
+
+  /**
+   * Generates vibecheck via the hosted MCP server.
+   */
+  private async generateVibecheckViaHostedMcp(
+    detection: VibeDetection,
+    accessToken: string
+  ): Promise<VibecheckOutput> {
+    const mcpServerUrl = this.getMcpServerUrl();
+    const language = this.detectLanguage(detection.uri);
+    const requestId = `req_${Date.now()}`;
+
+    const response = await fetch(mcpServerUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: requestId,
+        method: 'tools/call',
+        params: {
+          name: 'generateVibecheck',
+          arguments: {
+            code: detection.codeSnippet,
+            language,
+            triggeredBy: detection.triggeredBy,
+            difficulty: 'intermediate',
+            questionCount: 4,
+            context: `File: ${vscode.Uri.parse(detection.uri).fsPath}, Line: ${detection.line + 1}`,
+          },
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Authentication expired. Please login again.');
+      }
+      throw new Error(`MCP server error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = (await response.json()) as MCPResponse;
+
+    if (data.error) {
+      throw new Error(data.error.message);
+    }
+
+    if (!data.result?.content?.[0]?.text) {
+      throw new Error('Invalid response from MCP server');
+    }
+
+    const parsed = JSON.parse(data.result.content[0].text);
+    return {
+      questions: parsed.questions,
+      focusAreas: parsed.focusAreas,
+      estimatedDifficulty: parsed.estimatedDifficulty,
+    };
+  }
+
+  /**
+   * Generates vibecheck via the local Anthropic API key.
+   */
+  private async generateVibecheckViaLocalService(
+    detection: VibeDetection
+  ): Promise<VibecheckOutput> {
     const language = this.detectLanguage(detection.uri);
 
     const input: VibecheckInput = {
@@ -236,12 +309,6 @@ let mcpClientInstance: MCPClient | null = null;
 
 /**
  * Initialises the MCP client singleton.
- *
- * Args:
- *     context: The extension context.
- *
- * Returns:
- *     The initialised MCP client.
  */
 export async function initMCPClient(
   context: vscode.ExtensionContext
@@ -255,9 +322,6 @@ export async function initMCPClient(
 
 /**
  * Gets the MCP client singleton.
- *
- * Returns:
- *     The MCP client instance, or null if not initialised.
  */
 export function getMCPClient(): MCPClient | null {
   return mcpClientInstance;

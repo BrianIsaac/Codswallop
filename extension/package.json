@@ -107,6 +107,11 @@
           "type": "string",
           "default": "http://localhost:3000",
           "description": "Dashboard URL for authentication (e.g., https://codswallop.vercel.app)"
+        },
+        "codswallop.mcpServerUrl": {
+          "type": "string",
+          "default": "https://codswallop-mcp.leanmcp.com",
+          "description": "URL of the hosted MCP server for quiz generation (LeanMCP)"
         }
       }
     }
