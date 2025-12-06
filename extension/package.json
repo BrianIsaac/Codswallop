@@ -110,7 +110,7 @@
         },
         "codswallop.mcpServerUrl": {
           "type": "string",
-          "default": "https://codswallop.vercel.app/api/mcp",
+          "default": "https://codswallop-m6n9.vercel.app/api/mcp/mcp",
           "description": "URL of the hosted MCP server for quiz generation"
         }
       }

@@ -95,7 +95,7 @@ export class MCPClient implements vscode.Disposable {
    */
   private getMcpServerUrl(): string {
     const config = vscode.workspace.getConfiguration('codswallop');
-    return config.get<string>('mcpServerUrl') || 'https://codswallop.vercel.app/api/mcp';
+    return config.get<string>('mcpServerUrl') || 'https://codswallop-m6n9.vercel.app/api/mcp/mcp';
   }
 
   /**
