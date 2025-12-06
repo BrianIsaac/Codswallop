@@ -83,7 +83,26 @@ export class ConvexClient implements vscode.Disposable {
       }
     );
 
-    this.disposables.push(vibecheckCompletedHandler, vibecheckSkippedHandler);
+    const vibecheckStartedHandler = eventBus.on(
+      'vibecheck:started',
+      async (data) => {
+        await this.onVibecheckStarted(data);
+      }
+    );
+
+    const vibeDetectedHandler = eventBus.on(
+      'vibe:detected',
+      async (data) => {
+        await this.onVibeDetected(data);
+      }
+    );
+
+    this.disposables.push(
+      vibecheckCompletedHandler,
+      vibecheckSkippedHandler,
+      vibecheckStartedHandler,
+      vibeDetectedHandler
+    );
   }
 
   /**
@@ -450,6 +469,60 @@ export class ConvexClient implements vscode.Disposable {
       getEventBus().fire('convex:synced', { table: 'activityLog', count: 1 });
     } catch (error) {
       console.error('Codswallop: Failed to sync vibecheck skip:', error);
+    }
+  }
+
+  /**
+   * Handles vibecheck started event.
+   */
+  private async onVibecheckStarted(data: {
+    id: string;
+    uri: string;
+    line: number;
+    triggeredBy: IndicatorType;
+  }): Promise<void> {
+    if (!this.client || !this.userId) {
+      return;
+    }
+
+    try {
+      await this.logActivity('vibecheck:started', {
+        vibecheckId: data.id,
+        fileUri: data.uri,
+        line: data.line,
+        triggeredBy: data.triggeredBy,
+      });
+    } catch (error) {
+      console.error('Codswallop: Failed to log vibecheck start:', error);
+    }
+  }
+
+  /**
+   * Handles vibe detected event.
+   */
+  private async onVibeDetected(data: {
+    uri: string;
+    line: number;
+    triggeredBy: IndicatorType;
+    indicatorValue: number;
+    threshold: number;
+    codeSnippet: string;
+    timestamp: number;
+  }): Promise<void> {
+    if (!this.client || !this.userId) {
+      return;
+    }
+
+    try {
+      await this.logActivity('vibe:detected', {
+        fileUri: data.uri,
+        line: data.line,
+        triggeredBy: data.triggeredBy,
+        indicatorValue: data.indicatorValue,
+        threshold: data.threshold,
+      });
+    } catch (error) {
+      console.error('Codswallop: Failed to log vibe detection:', error);
     }
   }
 
