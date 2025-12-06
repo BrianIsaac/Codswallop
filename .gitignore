@@ -211,3 +211,6 @@ __marimo__/
 
 # .claude documents
 *.claude/
+
+# thoughts documents
+*thoughts/

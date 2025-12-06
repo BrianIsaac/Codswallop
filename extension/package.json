@@ -1,0 +1,102 @@
+{
+  "name": "codswallop",
+  "displayName": "Codswallop",
+  "description": "Vibecode checker for educational coding - detects when students blindly accept AI-generated code",
+  "version": "0.1.0",
+  "publisher": "codswallop",
+  "license": "SEE LICENSE IN LICENCE",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Education",
+    "Linters"
+  ],
+  "keywords": [
+    "education",
+    "vibe coding",
+    "ai detection",
+    "comprehension",
+    "quiz"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codswallop.startVibecheck",
+        "title": "Codswallop: Start Vibecheck"
+      },
+      {
+        "command": "codswallop.showDetections",
+        "title": "Codswallop: Show Detections"
+      },
+      {
+        "command": "codswallop.openDashboard",
+        "title": "Codswallop: Open Dashboard"
+      }
+    ],
+    "configuration": {
+      "title": "Codswallop",
+      "properties": {
+        "codswallop.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable Codswallop vibe detection"
+        },
+        "codswallop.thresholds.complexity": {
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "description": "Cyclomatic complexity threshold for immediate trigger"
+        },
+        "codswallop.thresholds.lineSpike": {
+          "type": "number",
+          "default": 50,
+          "minimum": 1,
+          "description": "Lines per minute threshold for immediate trigger"
+        },
+        "codswallop.thresholds.pasteLines": {
+          "type": "number",
+          "default": 10,
+          "minimum": 1,
+          "description": "Pasted lines threshold for immediate trigger"
+        },
+        "codswallop.debounceWindow": {
+          "type": "number",
+          "default": 60000,
+          "minimum": 1000,
+          "description": "Milliseconds cooldown per location before re-triggering"
+        },
+        "codswallop.convexUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Convex deployment URL for syncing data"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/test-electron": "^2.3.0",
+    "@vscode/vsce": "^2.22.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "convex": "^1.10.0"
+  }
+}
