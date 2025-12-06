@@ -14,12 +14,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Codswallop - Stop Vibe Coding, Start Understanding',
-  description: 'Detect when students blindly accept AI-generated code and ensure genuine comprehension with contextual quizzes.',
-  keywords: ['vibe coding', 'education', 'AI detection', 'comprehension', 'VS Code extension'],
+  description: 'Help students, interns, and apprentices build genuine programming skills. Codswallop detects over-reliance on AI-generated code and reinforces understanding through targeted comprehension quizzes.',
+  keywords: ['vibe coding', 'education', 'AI detection', 'comprehension', 'VS Code extension', 'programming skills', 'learn to code', 'software engineering', 'intern', 'apprentice'],
   authors: [{ name: 'Brian Isaac' }],
   openGraph: {
     title: 'Codswallop - Stop Vibe Coding, Start Understanding',
-    description: 'Detect when students blindly accept AI-generated code and ensure genuine comprehension.',
+    description: 'Build genuine programming skills. Detect AI over-reliance and reinforce comprehension through targeted quizzes.',
     type: 'website',
   },
 };

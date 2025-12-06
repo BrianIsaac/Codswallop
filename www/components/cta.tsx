@@ -19,10 +19,10 @@ export function CTA() {
           <FadeIn direction="left">
             <div className="text-center lg:text-left">
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                Ready to ensure genuine learning?
+                Ready to build real engineering skills?
               </h2>
               <p className="text-xl text-vibe-100 mb-8 max-w-xl">
-                Install Codswallop today and start detecting vibe coding in your classroom.
+                Stop letting AI do your thinking. Start understanding the code you write and prepare for interviews, code reviews, and your engineering career.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">

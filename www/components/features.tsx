@@ -15,32 +15,32 @@ export function Features() {
     {
       icon: Zap,
       title: 'Line Spike Detection',
-      description: 'Detects when code is added faster than humanly possible, flagging potential AI generation or copy-paste.',
+      description: 'Identifies rapid code additions that suggest copy-paste from AI or external sources, prompting you to verify understanding.',
     },
     {
       icon: BarChart3,
       title: 'Complexity Analysis',
-      description: 'Monitors cyclomatic complexity to identify suddenly complex code that may not be understood.',
+      description: 'Monitors cyclomatic complexity to catch when complex logic appears suddenly. Understanding branching and loops is essential.',
     },
     {
       icon: ClipboardPaste,
       title: 'Paste Monitoring',
-      description: 'Catches large code pastes that bypass the learning process of typing and thinking.',
+      description: 'Large paste operations trigger comprehension checks. Typing code helps retention; pasting requires verification.',
     },
     {
       icon: Smile,
-      title: 'Animated Vibe Character',
-      description: 'Friendly visual feedback shows current coding behaviour and alerts when patterns seem suspicious.',
+      title: 'Animated Companion',
+      description: 'A friendly detective character provides visual feedback on your coding, celebrating when you pass quizzes and encouraging practice when needed.',
     },
     {
       icon: Users,
-      title: 'Teacher Dashboard',
-      description: 'Real-time classroom monitoring with student progress, comprehension scores, and pattern analytics.',
+      title: 'Educator Dashboard',
+      description: 'Educators can monitor progress across classrooms, identify common struggle areas, and provide targeted support to learners.',
     },
     {
       icon: RefreshCw,
-      title: 'Real-time Sync',
-      description: 'Quiz results and activity data sync instantly between the extension and teacher dashboard.',
+      title: 'Progress Tracking',
+      description: 'Quiz results sync in real-time. Track your improvement over time and see which concepts need more attention.',
     },
   ];
 
@@ -52,7 +52,7 @@ export function Features() {
             Features
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Everything you need to ensure students actually understand their code.
+            Tools designed to build comprehension, not just detect gaps.
           </p>
         </FadeIn>
 

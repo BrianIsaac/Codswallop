@@ -8,17 +8,17 @@ export function HowItWorks() {
     {
       icon: Eye,
       title: 'Detect',
-      description: 'Codswallop monitors coding patterns in real-time: line spikes, complexity surges, and large paste events.',
+      description: 'Codswallop monitors your coding patterns: rapid code additions, sudden complexity spikes, and large paste operations that suggest AI-generated content.',
     },
     {
       icon: HelpCircle,
       title: 'Quiz',
-      description: 'When suspicious activity is detected, Claude AI generates contextual multiple-choice questions about the code.',
+      description: 'When patterns are detected, Claude AI generates targeted questions about the specific code. Questions focus on logic, edge cases, and behaviour you must understand.',
     },
     {
       icon: CheckCircle,
-      title: 'Verify',
-      description: 'Students demonstrate understanding. Results sync to the teacher dashboard for classroom-wide monitoring.',
+      title: 'Learn',
+      description: 'Answering quizzes reinforces comprehension. Track your progress over time and identify areas where you need deeper understanding.',
     },
   ];
 
@@ -30,7 +30,7 @@ export function HowItWorks() {
             How Codswallop Works
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Three simple steps to ensure genuine comprehension.
+            Build genuine engineering skills through active comprehension checks.
           </p>
         </FadeIn>
 

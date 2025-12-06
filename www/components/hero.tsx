@@ -19,7 +19,7 @@ export function Hero() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-vibe-100 dark:bg-vibe-900/30 text-vibe-700 dark:text-vibe-400 text-sm font-medium mb-6"
             >
               <Sparkles className="h-4 w-4" />
-              <span>For educators fighting AI-assisted plagiarism</span>
+              <span>For students, interns, and apprentices building real skills</span>
             </motion.div>
 
             <motion.h1
@@ -39,8 +39,8 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-xl"
             >
-              Codswallop detects when students blindly accept AI-generated code and
-              prompts them with comprehension quizzes to ensure genuine learning.
+              AI assistants can write code for you, but they cannot build your engineering skills.
+              Codswallop helps learners develop genuine comprehension through targeted quizzes.
             </motion.p>
 
             <motion.div
@@ -60,7 +60,7 @@ export function Hero() {
                 href="https://codswallop-m6n9.vercel.app/"
                 className="w-full sm:w-auto px-8 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-medium transition-all hover:scale-105"
               >
-                Teacher Dashboard
+                Educator Dashboard
               </Link>
             </motion.div>
           </div>

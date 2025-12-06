@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, Bot, Brain } from 'lucide-react';
+import { AlertTriangle, Bot, Brain, Briefcase } from 'lucide-react';
 import { FadeIn, StaggerContainer, StaggerItem, ScaleOnHover } from './motion-wrapper';
 
 export function Problem() {
@@ -9,22 +9,29 @@ export function Problem() {
       icon: Bot,
       iconBg: 'bg-red-100 dark:bg-red-900/30',
       iconColor: 'text-red-600 dark:text-red-400',
-      title: 'AI Does the Thinking',
-      description: 'Tools like Copilot and ChatGPT generate complete solutions. Students accept them without reading or understanding.',
+      title: 'Surface-Level Knowledge',
+      description: 'AI writes the code, you hit accept. The result works, but you cannot explain why, modify it confidently, or debug when it breaks.',
     },
     {
       icon: AlertTriangle,
       iconBg: 'bg-amber-100 dark:bg-amber-900/30',
       iconColor: 'text-amber-600 dark:text-amber-400',
-      title: 'Copy-Paste Culture',
-      description: 'Stack Overflow answers and AI suggestions become muscle memory. Debugging skills atrophy when code "just works".',
+      title: 'Fragile Foundations',
+      description: 'Without understanding fundamentals, learners struggle when AI suggestions are wrong. Debugging becomes guesswork instead of systematic problem-solving.',
     },
     {
       icon: Brain,
       iconBg: 'bg-purple-100 dark:bg-purple-900/30',
       iconColor: 'text-purple-600 dark:text-purple-400',
-      title: 'Knowledge Gaps',
-      description: 'Students graduate with impressive portfolios but struggle in interviews when asked to explain their own code.',
+      title: 'Interview Exposure',
+      description: 'Technical interviews quickly reveal comprehension gaps. Explaining code you did not truly write becomes impossible under pressure.',
+    },
+    {
+      icon: Briefcase,
+      iconBg: 'bg-blue-100 dark:bg-blue-900/30',
+      iconColor: 'text-blue-600 dark:text-blue-400',
+      title: 'Workplace Struggles',
+      description: 'Junior developers who cannot reason about code become bottlenecks. Code reviews, pair programming, and on-call rotations expose the skills gap.',
     },
   ];
 
@@ -33,14 +40,14 @@ export function Problem() {
       <div className="max-w-6xl mx-auto">
         <FadeIn className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            The Problem with AI-Assisted Coding
+            The Hidden Cost of Vibe Coding
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Students are passing courses without understanding their code.
+            AI can accelerate development, but over-reliance stunts the engineering skills you need to succeed.
           </p>
         </FadeIn>
 
-        <StaggerContainer className="grid md:grid-cols-3 gap-8">
+        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {problems.map((problem) => (
             <StaggerItem key={problem.title}>
               <ScaleOnHover>

@@ -13,7 +13,7 @@ export function Footer() {
             <div className="flex items-center gap-2">
               <span className="text-xl font-bold text-vibe-600 dark:text-vibe-400">Codswallop</span>
               <span className="text-gray-600 dark:text-gray-400">
-                - Detect vibe coding. Ensure understanding.
+                - Build real engineering skills.
               </span>
             </div>
 
