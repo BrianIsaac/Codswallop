@@ -1,33 +1,29 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
+import { ClerkProvider } from '@clerk/nextjs';
 import { ConvexClientProvider } from '@/components/convex-provider';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Codswallop Dashboard',
-  description: 'Teacher dashboard for monitoring student vibecheck progress',
+  description: 'Teacher dashboard for monitoring student vibe coding',
 };
 
-/**
- * Root layout for the Codswallop dashboard application.
- *
- * Args:
- *     children: Child components to render within the layout.
- *
- * Returns:
- *     The HTML document with Convex provider wrapping children.
- */
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ClerkProvider>
+          <ConvexClientProvider>
+            {children}
+          </ConvexClientProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
