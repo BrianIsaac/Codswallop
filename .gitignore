@@ -225,7 +225,7 @@ out/
 *.tsbuildinfo
 
 # Convex
-_generated/
+# Note: _generated/ is NOT ignored - we commit Convex generated files for Vercel deployment
 .env.local
 
 # Mac OS
