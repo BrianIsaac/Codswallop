@@ -279,6 +279,130 @@ export class ConvexClient implements vscode.Disposable {
   }
 
   /**
+   * Starts a vibecheck (marks it as in_progress).
+   *
+   * Args:
+   *     vibecheckId: The Convex vibecheck ID.
+   *
+   * Returns:
+   *     True if successful, false otherwise.
+   */
+  async startVibecheck(vibecheckId: string): Promise<boolean> {
+    const token = await this.ensureAuthenticated();
+    if (!this.client || !this.userId || !token) {
+      return false;
+    }
+
+    try {
+      this.client.setAuth(token);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (this.client as any).mutation('vibechecks:start', {
+        vibecheckId,
+      });
+      return true;
+    } catch (error) {
+      console.error('Codswallop: Failed to start vibecheck:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Submits an answer for a vibecheck question.
+   *
+   * Args:
+   *     vibecheckId: The Convex vibecheck ID.
+   *     questionId: The question ID.
+   *     answer: The user's answer.
+   *
+   * Returns:
+   *     Whether the answer was correct, or null on error.
+   */
+  async submitVibecheckAnswer(
+    vibecheckId: string,
+    questionId: string,
+    answer: string
+  ): Promise<boolean | null> {
+    const token = await this.ensureAuthenticated();
+    if (!this.client || !this.userId || !token) {
+      return null;
+    }
+
+    try {
+      this.client.setAuth(token);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await (this.client as any).mutation('vibechecks:submitAnswer', {
+        vibecheckId,
+        questionId,
+        answer,
+      });
+      return result?.correct as boolean;
+    } catch (error) {
+      console.error('Codswallop: Failed to submit answer:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Completes a vibecheck and gets the final score.
+   *
+   * Args:
+   *     vibecheckId: The Convex vibecheck ID.
+   *
+   * Returns:
+   *     The completion result with score, or null on error.
+   */
+  async completeVibecheck(
+    vibecheckId: string
+  ): Promise<{ passed: boolean; score: number; correctCount: number; totalQuestions: number } | null> {
+    const token = await this.ensureAuthenticated();
+    if (!this.client || !this.userId || !token) {
+      return null;
+    }
+
+    try {
+      this.client.setAuth(token);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await (this.client as any).mutation('vibechecks:complete', {
+        vibecheckId,
+      });
+      return result as { passed: boolean; score: number; correctCount: number; totalQuestions: number };
+    } catch (error) {
+      console.error('Codswallop: Failed to complete vibecheck:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Skips a vibecheck.
+   *
+   * Args:
+   *     vibecheckId: The Convex vibecheck ID.
+   *     reason: The reason for skipping.
+   *
+   * Returns:
+   *     True if successful, false otherwise.
+   */
+  async skipVibecheck(vibecheckId: string, reason: string): Promise<boolean> {
+    const token = await this.ensureAuthenticated();
+    if (!this.client || !this.userId || !token) {
+      return false;
+    }
+
+    try {
+      this.client.setAuth(token);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (this.client as any).mutation('vibechecks:skip', {
+        vibecheckId,
+        reason,
+      });
+      return true;
+    } catch (error) {
+      console.error('Codswallop: Failed to skip vibecheck:', error);
+      return false;
+    }
+  }
+
+  /**
    * Handles vibecheck completion event.
    */
   private async onVibecheckCompleted(data: {

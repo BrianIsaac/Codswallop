@@ -7,6 +7,7 @@
 
 import * as vscode from 'vscode';
 import { getEventBus, IndicatorType } from './event-bus';
+import { getConvexClient } from './convex-client';
 import {
   VibecheckOutput,
   VibecheckQuestion,
@@ -60,6 +61,8 @@ export class VibecheckPanel implements vscode.Disposable {
     this.codeSnippet = codeSnippet;
     this.triggeredBy = triggeredBy;
 
+    this.startVibecheckInDb();
+
     this.panel.webview.html = this.getHtmlContent();
 
     this.panel.webview.onDidReceiveMessage(
@@ -69,6 +72,16 @@ export class VibecheckPanel implements vscode.Disposable {
     );
 
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
+  }
+
+  /**
+   * Marks the vibecheck as started in the database.
+   */
+  private async startVibecheckInDb(): Promise<void> {
+    const convexClient = getConvexClient();
+    if (convexClient?.isConfigured() && this.vibecheckId.startsWith('j')) {
+      await convexClient.startVibecheck(this.vibecheckId);
+    }
   }
 
   /**
@@ -184,6 +197,11 @@ export class VibecheckPanel implements vscode.Disposable {
     };
     this.answers.push(questionAnswer);
 
+    const convexClient = getConvexClient();
+    if (convexClient?.isConfigured() && this.vibecheckId.startsWith('j')) {
+      convexClient.submitVibecheckAnswer(this.vibecheckId, questionId, answer);
+    }
+
     const feedbackMessage: ExtensionMessage = {
       type: 'feedback',
       data: {
@@ -226,7 +244,12 @@ export class VibecheckPanel implements vscode.Disposable {
   /**
    * Handles skipping the vibecheck.
    */
-  private handleSkip(reason: string): void {
+  private async handleSkip(reason: string): Promise<void> {
+    const convexClient = getConvexClient();
+    if (convexClient?.isConfigured() && this.vibecheckId.startsWith('j')) {
+      await convexClient.skipVibecheck(this.vibecheckId, reason);
+    }
+
     getEventBus().fire('vibecheck:skipped', {
       id: this.vibecheckId,
       reason,
@@ -237,12 +260,17 @@ export class VibecheckPanel implements vscode.Disposable {
   /**
    * Completes the vibecheck and reports results.
    */
-  private completeVibecheck(): void {
+  private async completeVibecheck(): Promise<void> {
     const result = calculateVibecheckResult(
       this.vibecheckId,
       this.answers,
       this.questions.length
     );
+
+    const convexClient = getConvexClient();
+    if (convexClient?.isConfigured() && this.vibecheckId.startsWith('j')) {
+      await convexClient.completeVibecheck(this.vibecheckId);
+    }
 
     const resultMessage: ExtensionMessage = {
       type: 'result',
