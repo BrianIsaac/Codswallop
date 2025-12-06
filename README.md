@@ -78,7 +78,7 @@ npm install
 npm run package
 ```
 
-This creates `codswallop-0.1.6.vsix` which can be installed via:
+This creates `codswallop-0.1.7.vsix` which can be installed via:
 - Command Palette: `Extensions: Install from VSIX...`
 
 ### Development Mode
