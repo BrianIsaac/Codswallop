@@ -15,6 +15,7 @@ import {
   TriggerType,
 } from './mcp';
 import { VibeDetection } from './vibe-detector';
+import { getSession } from './auth-provider';
 
 const API_KEY_SECRET_KEY = 'codswallop.anthropicApiKey';
 
@@ -90,6 +91,18 @@ export class MCPClient implements vscode.Disposable {
   }
 
   /**
+   * Clears the stored Anthropic API key.
+   *
+   * Returns:
+   *     A promise that resolves when the key is cleared.
+   */
+  async clearApiKey(): Promise<void> {
+    await this.secretStorage.delete(API_KEY_SECRET_KEY);
+    this.configured = false;
+    console.log('Codswallop: API key cleared');
+  }
+
+  /**
    * Prompts the user to enter their Anthropic API key.
    *
    * Returns:
@@ -133,10 +146,48 @@ export class MCPClient implements vscode.Disposable {
    *     Error: If the client is not configured or generation fails.
    */
   async generateVibecheck(detection: VibeDetection): Promise<VibecheckOutput> {
-    if (!this.configured) {
-      const configured = await this.promptForApiKey();
-      if (!configured) {
-        throw new Error('API key not configured');
+    // Check if user is logged in or has API key configured
+    const session = await getSession();
+
+    if (!this.configured && !session) {
+      // Neither logged in nor API key configured - offer choice
+      const choice = await vscode.window.showInformationMessage(
+        'To generate vibechecks, you can either login to use the hosted service or provide your own Anthropic API key.',
+        'Login',
+        'Use API Key'
+      );
+
+      if (choice === 'Login') {
+        await vscode.commands.executeCommand('codswallop.login');
+        // Check again after login
+        const newSession = await getSession();
+        if (!newSession) {
+          throw new Error('Login cancelled or failed');
+        }
+      } else if (choice === 'Use API Key') {
+        const configured = await this.promptForApiKey();
+        if (!configured) {
+          throw new Error('API key not configured');
+        }
+      } else {
+        throw new Error('Vibecheck generation cancelled');
+      }
+    } else if (!this.configured && session) {
+      // Logged in but no API key - this is fine, will use hosted service in Phase 5
+      // For now, prompt for API key as hosted service isn't implemented yet
+      const choice = await vscode.window.showInformationMessage(
+        'Hosted vibecheck service is not yet available. Please provide your Anthropic API key to continue.',
+        'Use API Key',
+        'Cancel'
+      );
+
+      if (choice === 'Use API Key') {
+        const configured = await this.promptForApiKey();
+        if (!configured) {
+          throw new Error('API key not configured');
+        }
+      } else {
+        throw new Error('Vibecheck generation cancelled');
       }
     }
 

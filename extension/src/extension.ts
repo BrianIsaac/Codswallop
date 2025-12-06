@@ -11,6 +11,8 @@ import { showVibecheckPanel } from './vibecheck-panel';
 import { initVibePanel, getVibePanelProvider } from './vibe-panel-provider';
 import { getVibeStateMachine } from './vibe-state-machine';
 import { getVibeActivityTracker } from './vibe-activity-tracker';
+import { initAuthProvider, login, logout, getSession } from './auth-provider';
+import { initStatusBar } from './status-bar';
 
 let statusBarItem: vscode.StatusBarItem;
 const disposables: vscode.Disposable[] = [];
@@ -27,8 +29,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     return;
   }
 
+  // Initialize authentication provider
+  const authProvider = initAuthProvider(context);
+  context.subscriptions.push(authProvider);
+
   registerCommands(context);
   createStatusBar(context);
+  initStatusBar(context);
   setupEventListeners(context);
   initVibeDetection(context);
   initVibePanel(context);
@@ -215,7 +222,77 @@ function registerCommands(context: vscode.ExtensionContext): void {
     }
   );
 
-  context.subscriptions.push(startVibecheck, showDetections, openDashboard, setApiKey);
+  const clearApiKey = vscode.commands.registerCommand(
+    'codswallop.clearApiKey',
+    async () => {
+      const mcpClient = getMCPClient();
+      if (!mcpClient) {
+        vscode.window.showErrorMessage(
+          'Codswallop: MCP client not initialised'
+        );
+        return;
+      }
+
+      await mcpClient.clearApiKey();
+      vscode.window.showInformationMessage(
+        'Codswallop: API key cleared successfully'
+      );
+    }
+  );
+
+  const loginCommand = vscode.commands.registerCommand(
+    'codswallop.login',
+    async () => {
+      try {
+        const session = await login();
+        vscode.window.showInformationMessage(
+          `Logged in as ${session.account.label}`
+        );
+        // Sync user with Convex after login
+        const convexClient = getConvexClient();
+        if (convexClient) {
+          await convexClient.syncUserFromAuth();
+        }
+      } catch (error) {
+        vscode.window.showErrorMessage(
+          `Login failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
+      }
+    }
+  );
+
+  const logoutCommand = vscode.commands.registerCommand(
+    'codswallop.logout',
+    async () => {
+      await logout();
+      vscode.window.showInformationMessage('Logged out of Codswallop');
+    }
+  );
+
+  const showAuthStatusCommand = vscode.commands.registerCommand(
+    'codswallop.showAuthStatus',
+    async () => {
+      const session = await getSession();
+      if (session) {
+        vscode.window.showInformationMessage(
+          `Logged in as ${session.account.label}`
+        );
+      } else {
+        vscode.window.showInformationMessage('Not logged in');
+      }
+    }
+  );
+
+  context.subscriptions.push(
+    startVibecheck,
+    showDetections,
+    openDashboard,
+    setApiKey,
+    clearApiKey,
+    loginCommand,
+    logoutCommand,
+    showAuthStatusCommand
+  );
 }
 
 /**

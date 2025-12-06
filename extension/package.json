@@ -42,8 +42,24 @@
         "title": "Codswallop: Set Anthropic API Key"
       },
       {
+        "command": "codswallop.clearApiKey",
+        "title": "Codswallop: Clear Anthropic API Key"
+      },
+      {
         "command": "codswallop.showVibe",
         "title": "Codswallop: Show Vibe Character"
+      },
+      {
+        "command": "codswallop.login",
+        "title": "Codswallop: Login"
+      },
+      {
+        "command": "codswallop.logout",
+        "title": "Codswallop: Logout"
+      },
+      {
+        "command": "codswallop.showAuthStatus",
+        "title": "Codswallop: Show Auth Status"
       }
     ],
     "configuration": {
@@ -82,6 +98,11 @@
           "type": "string",
           "default": "",
           "description": "Convex deployment URL for syncing data"
+        },
+        "codswallop.dashboardUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "Dashboard URL for authentication (e.g., https://codswallop.vercel.app)"
         }
       }
     }
